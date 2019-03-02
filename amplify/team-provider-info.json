@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "pocket-tutor-v2-20190226075438-authRole",
+            "UnauthRoleArn": "arn:aws:iam::589866649553:role/pocket-tutor-v2-20190226075438-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::589866649553:role/pocket-tutor-v2-20190226075438-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "pocket-tutor-v2-20190226075438-deployment",
+            "UnauthRoleName": "pocket-tutor-v2-20190226075438-unauthRole",
+            "StackName": "pocket-tutor-v2-20190226075438",
+            "StackId": "arn:aws:cloudformation:us-east-1:589866649553:stack/pocket-tutor-v2-20190226075438/c83190d0-3971-11e9-b359-0a009cdf2216"
+        },
+        "categories": {
+            "auth": {
+                "cognito8c7b8a9e": {}
+            }
+        }
+    }
+}
