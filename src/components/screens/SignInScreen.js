@@ -23,6 +23,8 @@ import {
   Icon
 } from 'native-base'
 
+import Button from '../ButtonComponent';
+
 // Load the app logo
 const logo = require('../images/logo.png')
 
@@ -31,7 +33,8 @@ const { height } = Dimensions.get('window');
 export default class SignInScreen extends React.Component {
   state = {
     username: '',
-    password: ''
+    password: '',
+    loading: false
   }
   
   onChangeText(key, value) {
@@ -41,12 +44,14 @@ export default class SignInScreen extends React.Component {
   }
   async signIn() {
     const { username, password } = this.state
+    this.setState({loading: true});
     await Auth.signIn(username, password)
     .then(user => {
-      this.setState({ user })
+      this.setState({ user, loading: false })
       this.props.navigation.navigate('Authloading')
     })
     .catch(err => {
+      this.setState({loading: false})
       if (! err.message) {
         console.log('Error when signing in: ', err)
         Alert.alert('Error when signing in: ', err)
@@ -108,13 +113,13 @@ export default class SignInScreen extends React.Component {
                       onChangeText={value => this.onChangeText('password', value)}
                     />
                   </Item>
-                  <TouchableOpacity
+                  <Button 
                     onPress={() => this.signIn()}
-                    style={styles.buttonStyle}>
-                    <Text style={styles.buttonText}>
-                      Sign In
-                    </Text>
-                  </TouchableOpacity>
+                    loading={this.state.loading}
+                    text="Sign In"
+                    buttonStyle={styles.buttonStyle}
+                    buttonTextStyle={styles.buttonText}
+                  />
                   <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text 
                       style={styles.buttonLink}

@@ -23,6 +23,8 @@ import {
   Icon
 } from 'native-base'
 
+import Button from '../ButtonComponent';
+
 // Load the app logo
 const logo = require('../images/logo.png')
 
@@ -32,7 +34,9 @@ export default class ForgetPasswordScreen extends React.Component {
   state = {
     username: '',
     authCode: '',
-    newPassword: ''
+    newPassword: '',
+    loading1: false,
+    loading2: false
   }
   onChangeText(key, value) {
     this.setState({
@@ -42,9 +46,13 @@ export default class ForgetPasswordScreen extends React.Component {
   // Request a new password
   async forgotPassword() {
     const { username } = this.state
+    this.setState({loading1: true})
     await Auth.forgotPassword(username)
-    .then(data => console.log('New code sent', data))
+    .then(data => {
+      this.setState({loading1: false});
+    })
     .catch(err => {
+      this.setState({loading1: false})
       if (! err.message) {
         console.log('Error while setting up the new password: ', err)
         Alert.alert('Error while setting up the new password: ', err)
@@ -57,12 +65,15 @@ export default class ForgetPasswordScreen extends React.Component {
   // Upon confirmation redirect the user to the Sign In page
   async forgotPasswordSubmit() {
     const { username, authCode, newPassword } = this.state
+    this.setState({loading2: true})
     await Auth.forgotPasswordSubmit(username, authCode, newPassword)
     .then(() => {
+      this.setState({loading2: false})
       this.props.navigation.navigate('SignIn')
       console.log('the New password submitted successfully')
     })
     .catch(err => {
+      this.setState({loading2: false})
       if (! err.message) {
         console.log('Error while confirming the new password: ', err)
         Alert.alert('Error while confirming the new password: ', err)
@@ -110,14 +121,13 @@ export default class ForgetPasswordScreen extends React.Component {
                       onChangeText={value => this.onChangeText('username', value)}
                     />
                   </Item>
-                  <TouchableOpacity
-                    onPress={this.forgotPassword.bind(this)}
-                    style={styles.buttonStyle}>
-                    <Text style={styles.buttonText}>
-                      Send Code
-                    </Text>
-                  </TouchableOpacity>
-                  {/* the New password section  */}
+                  <Button 
+                    onPress={() => this.forgotPassword.bind(this)}
+                    loading={this.state.loading1}
+                    text="Send Code"
+                    buttonStyle={styles.buttonStyle}
+                    buttonTextStyle={styles.buttonText}
+                  />
                   <Item rounded style={styles.itemStyle}>
                     <Icon
                       active
@@ -156,13 +166,13 @@ export default class ForgetPasswordScreen extends React.Component {
                       onChangeText={value => this.onChangeText('authCode', value)}
                     />
                   </Item>
-                  <TouchableOpacity
+                  <Button 
                     onPress={this.forgotPasswordSubmit.bind(this)}
-                    style={styles.buttonStyle}>
-                    <Text style={styles.buttonText}>
-                      Confirm the new password
-                    </Text>
-                  </TouchableOpacity>
+                    loading={this.state.loading2}
+                    text="Confirm the new password"
+                    buttonStyle={styles.buttonStyle}
+                    buttonTextStyle={styles.buttonText}
+                  />
                 </View>
               </Container>
             </View>

@@ -30,6 +30,8 @@ import Auth from '@aws-amplify/auth'
 // Import data for countries
 import data from '../countriesData'
 
+import Button from '../ButtonComponent';
+
 // Load the app logo
 const logo = require('../images/logo.png')
 
@@ -55,6 +57,7 @@ export default class SignUpScreen extends React.Component {
     flag: defaultFlag,
     modalVisible: false,
     authCode: '',
+    loading: false
   }
   // Get user input
   onChangeText(key, value) {
@@ -95,16 +98,20 @@ export default class SignUpScreen extends React.Component {
     const { fullName, username, password, email, phoneNumber } = this.state
     // rename variable to conform with Amplify Auth field phone attribute
     const phone_number = phoneNumber
+    this.setState({loading: true})
     await Auth.signUp({
       username,
       password,
       attributes: { email, phone_number, fullName }
     })
     .then(() => {
+      this.setState({loading: false})
       console.log('sign up successful!')
-      Alert.alert('Enter the confirmation code you received.')
+      Alert.alert('Sign Up Successfull.')
+      this.props.navigation.navigate('SignIn')
     })
     .catch(err => {
+      this.setState({loading: false})
       if (! err.message) {
         console.log('Error when signing up: ', err)
         Alert.alert('Error when signing up: ', err)
@@ -320,13 +327,13 @@ export default class SignUpScreen extends React.Component {
                       </Modal>
                     </Item>
                     {/* End of phone input */}
-                    <TouchableOpacity
-                      onPress={this.signUp.bind(this)}
-                      style={styles.buttonStyle}>
-                      <Text style={styles.buttonText}>
-                        Sign Up
-                      </Text>
-                    </TouchableOpacity>
+                    <Button 
+                      onPress={() => this.signUp()}
+                      loading={this.state.loading}
+                      text="Sign Up"
+                      buttonStyle={styles.buttonStyle}
+                      buttonTextStyle={styles.buttonText}
+                    />
                   </View>
                 </Container>
               </ScrollView>
