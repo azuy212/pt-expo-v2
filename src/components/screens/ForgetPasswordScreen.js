@@ -50,6 +50,10 @@ export default class ForgetPasswordScreen extends React.Component {
     await Auth.forgotPassword(username)
     .then(data => {
       this.setState({loading1: false});
+      console.log('Verification Code has been sent');
+      Alert.alert('Verification Code Sent',
+        `Please check your associated email and provide new password along with verification code`
+      )
     })
     .catch(err => {
       this.setState({loading1: false})
@@ -69,6 +73,7 @@ export default class ForgetPasswordScreen extends React.Component {
     await Auth.forgotPasswordSubmit(username, authCode, newPassword)
     .then(() => {
       this.setState({loading2: false})
+      Alert.alert('Password Changed Successfully', 'Your password has been updated ')
       this.props.navigation.navigate('SignIn')
       console.log('the New password submitted successfully')
     })
@@ -84,7 +89,6 @@ export default class ForgetPasswordScreen extends React.Component {
     })
   }
   render() {
-    console.log('height', height, width)
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar/>
@@ -122,7 +126,7 @@ export default class ForgetPasswordScreen extends React.Component {
                     />
                   </Item>
                   <Button 
-                    onPress={() => this.forgotPassword.bind(this)}
+                    onPress={() => this.forgotPassword()}
                     loading={this.state.loading1}
                     text="Send Code"
                     buttonStyle={styles.buttonStyle}

@@ -65,7 +65,10 @@ export default class SignInScreen extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar/>
-        <KeyboardAvoidingView style={styles.container} behavior='padding' enabled>
+        <KeyboardAvoidingView 
+          style={styles.container} 
+          behavior='padding' 
+          enabled>
           <TouchableWithoutFeedback 
             style={styles.container} 
             onPress={Keyboard.dismiss}>
@@ -124,11 +127,13 @@ export default class SignInScreen extends React.Component {
                     <Text 
                       style={styles.buttonLink}
                       onPress={() => this.props.navigation.navigate('SignUp')}>
-                      Register</Text>                    
+                      Register
+                    </Text>                    
                     <Text 
                       style={styles.buttonLink}
                       onPress={() => this.props.navigation.navigate('ForgetPassword')}>
-                      Forget Password?</Text>                    
+                      Forget Password?
+                    </Text>                    
                   </View>
                 </View>
               </Container>

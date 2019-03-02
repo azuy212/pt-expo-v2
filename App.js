@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity, Dimensions } from 'react-native'
 import { 
   createSwitchNavigator, 
   createStackNavigator,
@@ -18,9 +18,11 @@ import ProfileScreen from './src/components/screens/ProfileScreen'
 import AuthLoadingScreen from './src/components/screens/AuthLoadingScreen'
 
 // Amplify imports and config
-// import Amplify from '@aws-amplify/core'
-// import config from './src/aws-exports'
-// Amplify.configure(config)
+import Amplify from '@aws-amplify/core'
+import config from './aws-exports'
+Amplify.configure(config)
+
+const { height } = Dimensions.get('window');
 
 // Configurations and options for the AppTabNavigator
 const configurations = {
@@ -68,7 +70,8 @@ const options = {
       backgroundColor: '#667292',
       borderTopWidth: 1,
       borderTopColor: '#ff99',//'#667292',
-      paddingBottom: 0
+      paddingBottom: 0,
+      height: height / 10
     },
     labelStyle: {
       fontSize: 12,

@@ -9,8 +9,11 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   View,
-  Alert
+  Alert,
+  Dimensions
 } from 'react-native'
+
+import Button from '../ButtonComponent'
 
 import Auth from '@aws-amplify/auth'
 
@@ -21,10 +24,13 @@ import {
   Icon,
 } from 'native-base'
 
+const { height } = Dimensions.get('window');
+
 export default class SettingsScreen extends React.Component {
   state = {
     password1: '',
     password2: '',
+    loading: false
   }
   onChangeText(key, value) {
     this.setState({
@@ -34,12 +40,18 @@ export default class SettingsScreen extends React.Component {
   // Change user password for the app
   changePassword = async () => {
     const { password1, password2 } = this.state
+    this.setState({ loading: true })
     await Auth.currentAuthenticatedUser()
     .then(user => {
       return Auth.changePassword(user, password1, password2)
     })
-    .then(data => console.log('Password changed successfully', data))
+    .then(data => {
+      this.setState({ loading: false });
+      console.log('Password changed successfully', data);
+      Alert.alert('Password Changed!', 'Your password has been changed successfully!');
+    })
     .catch(err => {
+      this.setState({ loading: false });
       if (! err.message) {
         console.log('Error changing password: ', err)
         Alert.alert('Error changing password: ', err)
@@ -120,15 +132,15 @@ export default class SettingsScreen extends React.Component {
                       onChangeText={value => this.onChangeText('password2', value)}
                     />
                   </Item>
-                  <TouchableOpacity
+                  <Button 
                     onPress={this.changePassword}
-                    style={styles.buttonStyle}>
-                    <Text style={styles.buttonText}>
-                      Submit
-                    </Text>
-                  </TouchableOpacity>
+                    loading={this.state.loading}
+                    text="Submit"
+                    buttonStyle={styles.buttonStyle}
+                    buttonTextStyle={styles.buttonText}
+                  />
                   <View 
-                    style={{justifyContent: 'center', alignItems: 'center', paddingBottom: 100}}/>
+                    style={{justifyContent: 'center', alignItems: 'center', height: height / 10}}/>
                   <TouchableOpacity
                     style={[styles.buttonStyle, {flexDirection: 'row', justifyContent: 'center'}]}
                     onPress={this.signOutAlert}>
@@ -164,7 +176,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    height: 600,
+    height: 'auto',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -182,7 +194,7 @@ const styles = StyleSheet.create({
   buttonStyle: {
     alignItems: 'center',
     backgroundColor: '#667292',
-    padding: 14,
+    padding: height / 50,
     marginTop: 20,
     borderRadius: 24,
   },

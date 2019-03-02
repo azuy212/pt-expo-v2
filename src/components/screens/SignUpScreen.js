@@ -13,7 +13,6 @@ import {
   Modal,
   FlatList,
   Image,
-  ScrollView,
   Dimensions
 } from 'react-native'
 
@@ -31,6 +30,8 @@ import Auth from '@aws-amplify/auth'
 import data from '../countriesData'
 
 import Button from '../ButtonComponent';
+
+import Dialog from "react-native-dialog";
 
 // Load the app logo
 const logo = require('../images/logo.png')
@@ -57,7 +58,8 @@ export default class SignUpScreen extends React.Component {
     flag: defaultFlag,
     modalVisible: false,
     authCode: '',
-    loading: false
+    loading: false,
+    confirmCodeDialog: false
   }
   // Get user input
   onChangeText(key, value) {
@@ -98,20 +100,17 @@ export default class SignUpScreen extends React.Component {
     const { fullName, username, password, email, phoneNumber } = this.state
     // rename variable to conform with Amplify Auth field phone attribute
     const phone_number = phoneNumber
-    this.setState({loading: true})
-    await Auth.signUp({
-      username,
-      password,
-      attributes: { email, phone_number, fullName }
-    })
-    .then(() => {
-      this.setState({loading: false})
+    this.setState({ loading: true, confirmCodeDialog: true })
+    try {
+      await Auth.signUp({
+        username,
+        password,
+        attributes: { email, phone_number, name: fullName }
+      });
+      this.setState({ loading: false, confirmCodeDialog: true})
       console.log('sign up successful!')
-      Alert.alert('Sign Up Successfull.')
-      this.props.navigation.navigate('SignIn')
-    })
-    .catch(err => {
-      this.setState({loading: false})
+    } catch (error) {
+      this.setState({ loading: false })
       if (! err.message) {
         console.log('Error when signing up: ', err)
         Alert.alert('Error when signing up: ', err)
@@ -119,15 +118,26 @@ export default class SignUpScreen extends React.Component {
         console.log('Error when signing up: ', err.message)
         Alert.alert('Error when signing up: ', err.message)
       }
-    })
+    }
   }
   // Confirm users and redirect them to the SignIn page
   async confirmSignUp() {
     const { username, authCode } = this.state
     await Auth.confirmSignUp(username, authCode)
     .then(() => {
-      this.props.navigation.navigate('SignIn')
+      this.setState({ confirmCodeDialog: false });
       console.log('Confirm sign up successful')
+      Alert.alert(
+        'Account Verified!', 
+        'Congratulations! Your account has been verified successfully\n' +
+        'Please Sign In to your account',
+        [
+          {
+            text: 'Sign In',
+            onPress: () => this.props.navigation.navigate('SignIn')
+          }
+        ]
+      )
     })
     .catch(err => {
       if (! err.message) {
@@ -143,7 +153,10 @@ export default class SignUpScreen extends React.Component {
   async resendSignUp() {
     const { username } = this.state
     await Auth.resendSignUp(username)
-    .then(() => console.log('Confirmation code resent successfully'))
+    .then(() => {
+      console.log('Confirmation code resent successfully');
+      Alert.alert('Confirmation code resent successfully')
+    })
     .catch(err => {
       if (! err.message) {
         console.log('Error requesting new confirmation code: ', err)
@@ -153,6 +166,26 @@ export default class SignUpScreen extends React.Component {
         Alert.alert('Error requesting new confirmation code: ', err.message)
       }
     })
+  }
+  handleConfirmSignUpDialog = () => {
+    Alert.alert(
+      'Are you sure?', 
+      'You cannot verify your account later by yourself,\n'+
+      'You need to contact adminstrator for account verification',
+      [
+        {
+          text: 'Verify Later',
+          onPress: () => {
+            this.setState({ confirmCodeDialog: false })
+          },
+          style: 'destructive'
+        },
+        {
+          text: 'Verify Now',
+          style: 'default'
+        }
+      ]
+    );
   }
   render() {
     let { flag } = this.state
@@ -167,7 +200,7 @@ export default class SignUpScreen extends React.Component {
           <TouchableWithoutFeedback 
             style={styles.container} 
             onPress={Keyboard.dismiss}>
-              <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.container}>
                 {/* App Logo */}
                 <View style={styles.logoContainer}>
                   <Image style={styles.image} source={logo}/>
@@ -334,9 +367,23 @@ export default class SignUpScreen extends React.Component {
                       buttonStyle={styles.buttonStyle}
                       buttonTextStyle={styles.buttonText}
                     />
+                    <Dialog.Container visible={this.state.confirmCodeDialog}>
+                      <Dialog.Title>Enter Confirmation Code</Dialog.Title>
+                      <Dialog.Description>
+                        Please check your email and enter verification code you received. 
+                      </Dialog.Description>
+                      <Dialog.Input 
+                        label="Verification Code" 
+                        onChangeText={value => this.onChangeText('authCode', value)}
+                        style={{borderBottomColor: '#ccc', borderBottomWidth: 2}}>
+                      </Dialog.Input>
+                      <Dialog.Button label="Resend Code" onPress={() => this.resendSignUp()} />
+                      <Dialog.Button label="Cancel" onPress={() => this.handleConfirmSignUpDialog()} />
+                      <Dialog.Button label="Verify" onPress={() => this.confirmSignUp()}/>
+                    </Dialog.Container>
                   </View>
                 </Container>
-              </ScrollView>
+              </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -422,5 +469,9 @@ const styles = StyleSheet.create({
   image: {
     width: height / 3.5,
     height: height / 5.25
+  },
+  buttonLink: {
+    color: 'blue',
+    textDecorationLine: 'underline'
   },
 })
