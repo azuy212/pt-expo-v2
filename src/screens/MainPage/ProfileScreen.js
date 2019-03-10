@@ -21,7 +21,10 @@ export default class ProfileScreen extends React.Component {
       <View style={styles.container}>
         {
           this.state.profile ? this.state.profile.map(att => (
-            <Text style={styles.textStyle} key={att.Name}>{att.Name}: {att.Value}</Text>
+            <View key={att.Name}>
+              <Text style={styles.textTitle}>{att.Name}</Text>
+              <Text style={styles.textDescription}>{att.Value}</Text>
+            </View>
           )) : 'Loading...'
         }
       </View>
@@ -35,9 +38,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-  textStyle: {
-    paddingLeft: 20,
+  textTitle: {
+    paddingLeft: 10,
     fontSize: 20,
     fontWeight: 'bold'
+  },
+  textDescription: {
+    paddingLeft: 20,
+    fontSize: 18
   }
 })

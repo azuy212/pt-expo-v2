@@ -6,7 +6,7 @@ import {
   Image
 } from 'react-native'
 
-const logo = require('../images/logo.png');
+const logo = require('../../images/logo.png');
 
 export default class HomeScreen extends React.Component {
   render() {

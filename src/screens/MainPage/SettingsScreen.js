@@ -13,7 +13,7 @@ import {
   Dimensions
 } from 'react-native'
 
-import Button from '../components/ButtonComponent'
+import Button from '../../components/ButtonComponent'
 
 import Auth from '@aws-amplify/auth'
 
