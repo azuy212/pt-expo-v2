@@ -23,10 +23,10 @@ import {
   Icon
 } from 'native-base'
 
-import Button from '../ButtonComponent';
+import Button from '../../components/ButtonComponent';
 
 // Load the app logo
-const logo = require('../images/logo.png')
+const logo = require('../../images/logo.png')
 
 const { height, width } = Dimensions.get('window');
 

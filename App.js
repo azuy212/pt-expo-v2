@@ -8,14 +8,18 @@ import {
 
 import { Icon } from 'native-base'
 
-import WelcomeScreen from './src/components/screens/WelcomeScreen'
-import SignInScreen from './src/components/screens/SignInScreen'
-import SignUpScreen from './src/components/screens/SignUpScreen'
-import ForgetPasswordScreen from './src/components/screens/ForgetPasswordScreen'
-import HomeScreen from './src/components/screens/HomeScreen'
-import SettingsScreen from './src/components/screens/SettingsScreen'
-import ProfileScreen from './src/components/screens/ProfileScreen'
-import AuthLoadingScreen from './src/components/screens/AuthLoadingScreen'
+// UserManagement
+import {
+  AuthLoadingScreen,
+  ForgetPasswordScreen,
+  SignInScreen,
+  SignUpScreen
+} from './src/screens/UserManagement'
+
+import HomeScreen from './src/screens/HomeScreen'
+import WelcomeScreen from './src/screens/WelcomeScreen'
+import SettingsScreen from './src/screens/SettingsScreen'
+import ProfileScreen from './src/screens/ProfileScreen'
 
 // Amplify imports and config
 import Amplify from '@aws-amplify/core'

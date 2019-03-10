@@ -27,14 +27,14 @@ import {
 import Auth from '@aws-amplify/auth'
 
 // Import data for countries
-import data from '../countriesData'
+import data from './countriesData'
 
-import Button from '../ButtonComponent';
+import Button from '../../components/ButtonComponent';
 
 import Dialog from "react-native-dialog";
 
 // Load the app logo
-const logo = require('../images/logo.png')
+const logo = require('../../images/logo.png')
 
 const { height } = Dimensions.get('window');
 
@@ -100,7 +100,7 @@ export default class SignUpScreen extends React.Component {
     const { fullName, username, password, email, phoneNumber } = this.state
     // rename variable to conform with Amplify Auth field phone attribute
     const phone_number = phoneNumber
-    this.setState({ loading: true, confirmCodeDialog: true })
+    this.setState({ loading: true })
     try {
       await Auth.signUp({
         username,
@@ -111,13 +111,9 @@ export default class SignUpScreen extends React.Component {
       console.log('sign up successful!')
     } catch (error) {
       this.setState({ loading: false })
-      if (! err.message) {
-        console.log('Error when signing up: ', err)
-        Alert.alert('Error when signing up: ', err)
-      } else {
-        console.log('Error when signing up: ', err.message)
-        Alert.alert('Error when signing up: ', err.message)
-      }
+      const err = error.message ? error.message : error;
+      console.log('Error when signing up: ', err)
+      Alert.alert('Error when signing up: ', err)
     }
   }
   // Confirm users and redirect them to the SignIn page
