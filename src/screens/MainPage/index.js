@@ -4,13 +4,15 @@ import HomeScreen from "./HomeScreen";
 import ProfileScreen from "./ProfileScreen";
 import SettingsScreen from "./SettingsScreen";
 
-import { Dimensions } from "react-native";
+import { Dimensions, Image } from "react-native";
 import { Icon } from "native-base";
 
 import {
   createStackNavigator,
   createMaterialTopTabNavigator
 } from "react-navigation";
+
+const logo = require('../../images/logo.png');
 
 const { height } = Dimensions.get("window");
 
