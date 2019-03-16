@@ -7,6 +7,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@types/react-native-dialog": "^5.5.0",
     "aws-amplify": "^1.1.19",
     "aws-amplify-react-native": "^2.1.7",
     "expo": "^32.0.0",
@@ -20,6 +21,7 @@
     "@types/expo": "^32.0.7",
     "@types/react": "^16.8.7",
     "@types/react-native": "^0.57.38",
+    "@types/react-navigation": "^3.0.5",
     "babel-preset-expo": "^5.0.0",
     "tslint": "^5.13.1",
     "tslint-config-airbnb": "^5.11.1",

@@ -1,17 +1,12 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Text,
-  Image,
-} from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
+import { NavigationScreenProps } from 'react-navigation';
 
 // Load the app logo
-const logo = require('../../images/logo.png');1
+import logo from '../../images/logo.png';
 
-export default class WelcomeScreen extends React.Component {
-  handleRoute = async (destination) => {
+export default class WelcomeScreen extends React.Component<NavigationScreenProps> {
+  handleRoute = async (destination: string) => {
     await this.props.navigation.navigate(destination);
   }
 
@@ -54,7 +49,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonStyle: {
-    padding: 10,
+    padding: 20,
   },
   textStyle: {
     fontSize: 18,

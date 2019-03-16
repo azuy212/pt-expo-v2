@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 import {
-  TouchableOpacity,
   TouchableWithoutFeedback,
   StyleSheet,
-  Text,
   SafeAreaView,
   StatusBar,
   KeyboardAvoidingView,
@@ -11,106 +9,107 @@ import {
   View,
   Alert,
   Dimensions,
-  Image
-} from 'react-native'
+  Image,
+} from 'react-native';
 
-import Auth from '@aws-amplify/auth'
+import Auth from '@aws-amplify/auth';
 
-import {
-  Container,
-  Item,
-  Input,
-  Icon
-} from 'native-base'
+import { Container, Item, Input, Icon } from 'native-base';
 
 import Button from '../../components/ButtonComponent';
+import { showErrorAlert } from '../../services/error';
+import { NavigationScreenProps } from 'react-navigation';
 
 // Load the app logo
-const logo = require('../../images/logo.png')
+import logo from '../../images/logo.png';
 
 const { height, width } = Dimensions.get('window');
 
-export default class ForgetPasswordScreen extends React.Component {
+interface State {
+  username: string;
+  authCode: string;
+  newPassword: string;
+  loading1: boolean;
+  loading2: boolean;
+}
+
+type StateKeys = keyof State;
+
+export default class ForgetPasswordScreen extends React.Component<NavigationScreenProps, State> {
   state = {
     username: '',
     authCode: '',
     newPassword: '',
     loading1: false,
-    loading2: false
-  }
-  onChangeText(key, value) {
+    loading2: false,
+  };
+  onChangeText(key: StateKeys, value: any) {
     this.setState({
-      [key]: value
-    })
+      [key]: value,
+    } as Pick<State, StateKeys>);
   }
   // Request a new password
-  async forgotPassword() {
-    const { username } = this.state
-    this.setState({loading1: true})
+  forgotPassword = async () => {
+    const { username } = this.state;
+    this.setState({ loading1: true });
     await Auth.forgotPassword(username)
-    .then(data => {
-      this.setState({loading1: false});
-      console.log('Verification Code has been sent');
-      Alert.alert('Verification Code Sent',
-        `Please check your associated email and provide new password along with verification code`
-      )
-    })
-    .catch(err => {
-      this.setState({loading1: false})
-      if (! err.message) {
-        console.log('Error while setting up the new password: ', err)
-        Alert.alert('Error while setting up the new password: ', err)
-      } else {
-        console.log('Error while setting up the new password: ', err.message)
-        Alert.alert('Error while setting up the new password: ', err.message)
-      }
-    })
+      .then(() => {
+        this.setState({ loading1: false });
+        console.log('Verification Code has been sent');
+        Alert.alert(
+          'Verification Code Sent',
+          'Please check your associated email and provide new password with verification code',
+        );
+      })
+      .catch((err) => {
+        this.setState({ loading1: false });
+        showErrorAlert('Error while setting up the new password: ', err);
+      });
   }
   // Upon confirmation redirect the user to the Sign In page
-  async forgotPasswordSubmit() {
-    const { username, authCode, newPassword } = this.state
-    this.setState({loading2: true})
+  forgotPasswordSubmit = async () => {
+    const { username, authCode, newPassword } = this.state;
+    this.setState({ loading2: true });
     await Auth.forgotPasswordSubmit(username, authCode, newPassword)
-    .then(() => {
-      this.setState({loading2: false})
-      Alert.alert('Password Changed Successfully', 'Your password has been updated ')
-      this.props.navigation.navigate('SignIn')
-      console.log('the New password submitted successfully')
-    })
-    .catch(err => {
-      this.setState({loading2: false})
-      if (! err.message) {
-        console.log('Error while confirming the new password: ', err)
-        Alert.alert('Error while confirming the new password: ', err)
-      } else {
-        console.log('Error while confirming the new password: ', err.message)
-        Alert.alert('Error while confirming the new password: ', err.message)
-      }
-    })
+      .then(() => {
+        this.setState({ loading2: false });
+        Alert.alert(
+          'Password Changed Successfully',
+          'Your password has been updated ',
+        );
+        this.props.navigation.navigate('SignIn');
+        console.log('the New password submitted successfully');
+      })
+      .catch((err) => {
+        this.setState({ loading2: false });
+        showErrorAlert('Error while confirming the new password: ', err);
+      });
   }
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar/>
-        <KeyboardAvoidingView 
-          style={styles.container} 
-          behavior='padding' 
-          enabled >
-          <TouchableWithoutFeedback 
-            style={styles.container} 
-            onPress={Keyboard.dismiss}>
+        <StatusBar />
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior='padding'
+          enabled={true}
+        >
+          <TouchableWithoutFeedback
+            style={styles.container}
+            onPress={Keyboard.dismiss}
+          >
             <View style={styles.container}>
               {/* App Logo */}
               <View style={styles.logoContainer}>
-                <Image source={logo} style={styles.image}/>
+                <Image source={logo} style={styles.image} />
               </View>
               {/* Infos */}
               <Container style={styles.infoContainer}>
                 <View style={styles.container}>
                   {/* Username */}
-                  <Item rounded style={styles.itemStyle}>
+                  <Item rounded={true} style={styles.itemStyle}>
                     <Icon
-                      active
+                      active={true}
                       name='person'
                       style={styles.iconStyle}
                     />
@@ -122,19 +121,21 @@ export default class ForgetPasswordScreen extends React.Component {
                       returnKeyType='go'
                       autoCapitalize='none'
                       autoCorrect={false}
-                      onChangeText={value => this.onChangeText('username', value)}
+                      onChangeText={value =>
+                        this.onChangeText('username', value)
+                      }
                     />
                   </Item>
-                  <Button 
-                    onPress={() => this.forgotPassword()}
+                  <Button
+                    onPress={this.forgotPassword}
                     loading={this.state.loading1}
-                    text="Send Code"
+                    text='Send Code'
                     buttonStyle={styles.buttonStyle}
                     buttonTextStyle={styles.buttonText}
                   />
-                  <Item rounded style={styles.itemStyle}>
+                  <Item rounded={true} style={styles.itemStyle}>
                     <Icon
-                      active
+                      active={true}
                       name='lock'
                       style={styles.iconStyle}
                     />
@@ -146,14 +147,17 @@ export default class ForgetPasswordScreen extends React.Component {
                       autoCapitalize='none'
                       autoCorrect={false}
                       secureTextEntry={true}
-                      onSubmitEditing={(event) => { this.refs.SecondInput._root.focus() }}
-                      onChangeText={value => this.onChangeText('newPassword', value)}
+                      onChangeText={value =>
+                        this.onChangeText('newPassword', value)
+                      }
                     />
                   </Item>
-                  {/* Code confirmation section  */}
-                  <Item rounded style={styles.itemStyle}>
+
+                  {/**************** Code confirmation section  *****************/}
+
+                  <Item rounded={true} style={styles.itemStyle}>
                     <Icon
-                      active
+                      active={true}
                       name='md-apps'
                       style={styles.iconStyle}
                     />
@@ -166,14 +170,15 @@ export default class ForgetPasswordScreen extends React.Component {
                       autoCapitalize='none'
                       autoCorrect={false}
                       secureTextEntry={false}
-                      ref='SecondInput'
-                      onChangeText={value => this.onChangeText('authCode', value)}
+                      onChangeText={value =>
+                        this.onChangeText('authCode', value)
+                      }
                     />
                   </Item>
-                  <Button 
-                    onPress={this.forgotPasswordSubmit.bind(this)}
+                  <Button
+                    onPress={this.forgotPasswordSubmit}
                     loading={this.state.loading2}
-                    text="Confirm the new password"
+                    text='Confirm the new password'
                     buttonStyle={styles.buttonStyle}
                     buttonTextStyle={styles.buttonText}
                   />
@@ -192,14 +197,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
     justifyContent: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   input: {
     height: 30,
     backgroundColor: '#fff',
     marginHorizontal: 10,
     marginVertical: 5,
-    width: window.width - 30,
+    width: width - 30,
   },
   infoContainer: {
     position: 'absolute',
@@ -219,7 +224,7 @@ const styles = StyleSheet.create({
   iconStyle: {
     color: '#5a52a5',
     fontSize: 28,
-    marginLeft: 15
+    marginLeft: 15,
   },
   buttonStyle: {
     alignItems: 'center',
@@ -231,7 +236,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: "#fff",
+    color: '#fff',
   },
   logoContainer: {
     position: 'absolute',
@@ -245,6 +250,6 @@ const styles = StyleSheet.create({
   },
   image: {
     width: height / 3.5,
-    height: height / 5.25
+    height: height / 5.25,
   },
-})
+});
