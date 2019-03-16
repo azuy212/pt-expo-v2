@@ -6,7 +6,7 @@ import logo from '../../images/logo.png';
 export default class HomeScreen extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <View style={{ paddingBottom: 50 }}>
           <Image style={{ width: 300, height: 200 }} source={logo} />
         </View>
@@ -17,11 +17,3 @@ export default class HomeScreen extends React.Component {
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

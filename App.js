@@ -5,7 +5,7 @@ import AuthLoadingScreen from "./src/screens/AuthLoadingScreen";
 // UserManagement
 import { AuthStackNavigator } from "./src/screens/UserManagement";
 // Main Page
-import { AppStackNavigator } from './src/screens/MainPage';
+import AppStackNavigator from './src/screens/MainPage';
 
 // Amplify imports and config
 import Amplify from "@aws-amplify/core";

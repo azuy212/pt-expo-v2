@@ -1,2 +1,2 @@
-# pt-expo-v2
-PT-EXPO-V2
+# PT-EXPO-V2
+pt-expo-v2
