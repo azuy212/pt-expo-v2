@@ -1,89 +1,47 @@
 import React from 'react';
+import { Header, Image } from 'react-native-elements';
 
 import HomeScreen from './HomeScreen';
-import ProfileScreen from './ProfileScreen';
-import SettingsScreen from './SettingsScreen';
+import { View, StyleSheet } from 'react-native';
 
-import { Dimensions, Image } from 'react-native';
-import { Icon } from 'native-base';
+import HeaderComponent from '../../components/HeaderComponent';
 
-import {
-  createStackNavigator,
-  createMaterialTopTabNavigator,
-  TabNavigatorConfig,
-} from 'react-navigation';
+import logo from '../../images/logo.png';
 
-const { height } = Dimensions.get('window');
+export default (props: any) => (
+  <View style={styles.containerStyle}>
+    <Header
+      leftComponent={<HeaderComponent icon='chat' text='Chat' />}
+      centerComponent={
+        <Image source={logo} style={{ width: 70, height: 50 }} />}
+      rightComponent={
+        <HeaderComponent
+          icon='person'
+          text='Profile'
+          onPress={props.navigation.navigate('profile')}
+        />
+      }
+      containerStyle={styles.headerStyle}
+      statusBarProps={{ hidden: true }}
+    />
+    <View style={styles.contentStyle}>
+      <HomeScreen />
+    </View>
+  </View>
+);
 
-// Configurations and options for the AppTabNavigator
-const configurations = {
-  Home: {
-    screen: HomeScreen,
-    navigationOptions: {
-      tabBarLabel: 'Home',
-      tabBarIcon: ({ tintColor }: {tintColor: string}) => (
-        <Icon name='ios-home' style={{ fontSize: 26, color: tintColor }} />
-      ),
-    },
+const styles = StyleSheet.create({
+  containerStyle: {
+    flex: 1,
   },
-  Profile: {
-    screen: ProfileScreen,
-    navigationOptions: {
-      tabBarLabel: 'Profile',
-      tabBarIcon: ({ tintColor }: {tintColor: string}) => (
-        <Icon name='ios-person' style={{ fontSize: 26, color: tintColor }} />
-      ),
-    },
+  headerStyle: {
+    backgroundColor: '#fff',
+    borderBottomWidth: 2,
+    borderBottomColor: '#aaa',
   },
-  Settings: {
-    screen: SettingsScreen,
-    navigationOptions: {
-      tabBarLabel: 'Settings',
-      tabBarIcon: ({ tintColor }: {tintColor: string}) => (
-        <Icon name='ios-settings' style={{ fontSize: 26, color: tintColor }} />
-      ),
-    },
-  },
-};
-
-const options: TabNavigatorConfig = {
-  tabBarPosition: 'bottom',
-  swipeEnabled: true,
-  animationEnabled: true,
-  tabBarOptions: {
-    showLabel: true,
-    activeTintColor: '#fff',
-    inactiveTintColor: '#a8abaf',
-    style: {
-      backgroundColor: '#667292',
-      height: height / 12,
-    },
-    labelStyle: {
-      fontSize: 12,
-      fontWeight: 'bold',
-      marginTop: 2,
-    },
-    indicatorStyle: {
-      height: 0,
-    },
-    showIcon: true,
-  },
-};
-
-// Bottom App tabs
-const AppTabNavigator = createMaterialTopTabNavigator(configurations, options);
-
-// Making the common header title dynamic in AppTabNavigator
-AppTabNavigator.navigationOptions = ({ navigation }: {navigation: any}) => {
-  const { routeName } = navigation.state.routes[navigation.state.index];
-  const headerTitle = routeName;
-  return {
-    headerTitle,
-  };
-};
-
-export const AppStackNavigator = createStackNavigator({
-  AppTabNavigator: {
-    screen: AppTabNavigator,
+  contentStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
