@@ -2,8 +2,15 @@ import React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
 import logo from '../../images/logo.png';
+import { Icon } from 'react-native-elements';
 
 export default class HomeScreen extends React.Component {
+  static navigationOptions = {
+    drawerLabel: 'Home',
+    drawerIcon: ({ tintColor }: {tintColor: any}) => (
+      <Icon name='home' />
+    ),
+  };
   render() {
     return (
       <View>

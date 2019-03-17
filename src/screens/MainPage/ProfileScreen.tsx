@@ -1,10 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import { Auth } from 'aws-amplify';
+import { Button } from 'react-native-elements';
 
 import { ICognitoUserAttributeData } from 'amazon-cognito-identity-js';
+import { showErrorAlert } from '../../services/error';
 
-interface Props {}
+interface Props {
+  navigate: (screen: 'settings') => void;
+}
 
 interface State {
   attr: ICognitoUserAttributeData[];
@@ -18,27 +22,51 @@ export default class ProfileScreen extends React.Component<Props, State> {
   };
 
   async componentDidMount() {
-    const profile = await Auth.currentAuthenticatedUser();
-    const attr: any = await Auth.userAttributes(profile);
-    console.log('profile', profile);
-    this.setState({ profile, attr });
+    try {
+      const profile = await Auth.currentAuthenticatedUser();
+      let attr: any = await Auth.userAttributes(profile);
+      attr = attr.filter(
+        (att: any) =>
+          att.Name === 'sub' ||
+          att.Name === 'email' ||
+          att.Name === 'phone_number',
+      ).map((att:any) => {
+        switch (att.Name) {
+          case 'sub':
+            return { ...att, Name: 'id' };
+          case 'email':
+            return { ...att, Name: 'Email' };
+          case 'phone_number':
+            return { ...att, Name: 'Phone Number' };
+          default:
+            return { ...att };
+        }
+      });
+      this.setState({ profile, attr });
+    } catch (err) {
+      showErrorAlert('Error when getting Profile Info', err);
+    }
   }
 
   render() {
-    return (
+    return this.state.profile ? (
       <View style={styles.container}>
-        {this.state.profile ? (
-          <Text style={styles.textHeader}>{this.state.profile.username}</Text>
-        ) : null}
-        {this.state.attr
-          ? this.state.attr.map(att => (
-              <View key={att.Name}>
-                <Text style={styles.textTitle}>{att.Name}</Text>
-                <Text style={styles.textDescription}>{att.Value}</Text>
-              </View>
-            ))
-          : 'Loading...'}
+        <Text style={styles.textHeader}>{this.state.profile.username}</Text>
+        {this.state.attr.map(att => (
+          <View key={att.Name}>
+            <Text style={styles.textTitle}>{att.Name}</Text>
+            <Text style={styles.textDescription}>{att.Value}</Text>
+          </View>
+        ))}
+        <View style={styles.buttonStyle}>
+          <Button
+            title='Settings'
+            onPress={() => this.props.navigate('settings')}
+          />
+        </View>
       </View>
+    ) : (
+      <ActivityIndicator size='large' />
     );
   }
 }
@@ -62,5 +90,9 @@ const styles = StyleSheet.create({
   textDescription: {
     paddingLeft: 20,
     fontSize: 18,
+  },
+  buttonStyle: {
+    marginTop: 50,
+    alignSelf: 'stretch',
   },
 });
