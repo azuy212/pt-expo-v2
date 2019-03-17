@@ -47,7 +47,7 @@ export default class SettingsScreen extends React.Component<NavigationScreenProp
     this.setState({ loading: true });
     await Auth.currentAuthenticatedUser()
       .then(user => Auth.changePassword(user, password1, password2))
-      .then((data) => {
+      .then(data => {
         this.setState({ loading: false });
         console.log('Password changed successfully', data);
         Alert.alert(
@@ -55,7 +55,7 @@ export default class SettingsScreen extends React.Component<NavigationScreenProp
           'Your password has been changed successfully!',
         );
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({ loading: false });
         const error = !err.message ? err : err.message;
         console.log('Error changing password: ', error);
@@ -88,92 +88,71 @@ export default class SettingsScreen extends React.Component<NavigationScreenProp
   }
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar />
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior='padding'
-          enabled={true}
-        >
-          <TouchableWithoutFeedback
-            style={styles.container}
-            onPress={Keyboard.dismiss}
+      <KeyboardAvoidingView
+        style={styles.infoContainer}
+        behavior='padding'
+        enabled={true}
+      >
+        <View style={styles.container}>
+          <View
+            style={[styles.buttonStyle, { borderRadius: 4, marginBottom: 20 }]}
           >
-            <View style={styles.container}>
-              {/*Infos*/}
-              <Container style={styles.infoContainer}>
-                <View style={styles.container}>
-                  <View
-                    style={[
-                      styles.buttonStyle,
-                      { borderRadius: 4, marginBottom: 20 },
-                    ]}
-                  >
-                    <Text style={styles.buttonText}>Change password</Text>
-                  </View>
-                  {/* Old password */}
-                  <Item rounded={true} style={styles.itemStyle}>
-                    <Icon active={true} name='lock' style={styles.iconStyle} />
-                    <Input
-                      style={styles.input}
-                      placeholder='Old password'
-                      placeholderTextColor='#adb4bc'
-                      returnKeyType='next'
-                      autoCapitalize='none'
-                      autoCorrect={false}
-                      secureTextEntry={true}
-                      onChangeText={value => this.onChangeText('password1', value)}
-                    />
-                  </Item>
-                  {/* New password */}
-                  <Item rounded={true} style={styles.itemStyle}>
-                    <Icon active={true} name='lock' style={styles.iconStyle} />
-                    <Input
-                      style={styles.input}
-                      placeholder='New password'
-                      placeholderTextColor='#adb4bc'
-                      returnKeyType='go'
-                      autoCapitalize='none'
-                      autoCorrect={false}
-                      secureTextEntry={true}
-                      onChangeText={value =>
-                        this.onChangeText('password2', value)
-                      }
-                    />
-                  </Item>
-                  <Button
-                    onPress={this.changePassword}
-                    loading={this.state.loading}
-                    text='Submit'
-                    buttonStyle={styles.buttonStyle}
-                    buttonTextStyle={styles.buttonText}
-                  />
-                  <View
-                    style={{
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: height / 10,
-                    }}
-                  />
-                  <TouchableOpacity
-                    style={[
-                      styles.buttonStyle,
-                      { flexDirection: 'row', justifyContent: 'center' },
-                    ]}
-                    onPress={this.signOutAlert}
-                  >
-                    <Icon
-                      name='md-power'
-                      style={{ color: '#fff', paddingRight: 10 }}
-                    />
-                    <Text style={styles.buttonText}>Sign out</Text>
-                  </TouchableOpacity>
-                </View>
-              </Container>
-            </View>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+            <Text style={styles.buttonText}>Change password</Text>
+          </View>
+          {/* Old password */}
+          <Item rounded={true} style={styles.itemStyle}>
+            <Icon active={true} name='lock' style={styles.iconStyle} />
+            <Input
+              style={styles.input}
+              placeholder='Old password'
+              placeholderTextColor='#adb4bc'
+              returnKeyType='next'
+              autoCapitalize='none'
+              autoCorrect={false}
+              secureTextEntry={true}
+              onChangeText={value => this.onChangeText('password1', value)}
+            />
+          </Item>
+          {/* New password */}
+          <Item rounded={true} style={styles.itemStyle}>
+            <Icon active={true} name='lock' style={styles.iconStyle} />
+            <Input
+              style={styles.input}
+              placeholder='New password'
+              placeholderTextColor='#adb4bc'
+              returnKeyType='go'
+              autoCapitalize='none'
+              autoCorrect={false}
+              secureTextEntry={true}
+              onChangeText={value => this.onChangeText('password2', value)}
+            />
+          </Item>
+          <Button
+            onPress={this.changePassword}
+            loading={this.state.loading}
+            text='Submit'
+            buttonStyle={styles.buttonStyle}
+            buttonTextStyle={styles.buttonText}
+          />
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: height / 10,
+            }}
+          />
+          <TouchableOpacity
+            style={[
+              styles.buttonStyle,
+              { flexDirection: 'row', justifyContent: 'center' },
+            ]}
+            onPress={this.signOutAlert}
+          >
+            <Icon name='md-power' style={{ color: '#fff', paddingRight: 10 }} />
+            <Text style={styles.buttonText}>Sign out</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     );
   }
 }
