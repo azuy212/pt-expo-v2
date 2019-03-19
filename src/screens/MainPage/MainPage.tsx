@@ -17,7 +17,7 @@ import ProfileScreen from './ProfileScreen';
 import SettingsScreen from './SettingsScreen';
 import ChatScreen from './ChatScreen';
 
-type Screens = 'home' | 'profile' | 'settings';
+export type Screens = 'home' | 'profile' | 'settings';
 
 interface State {
   currentScreen: Screens;
@@ -88,7 +88,6 @@ export default class extends React.Component<NavigationScreenProps, State> {
           rightComponent={
             <IconWithText
               icon='person'
-            //   text='Profile'
               onPress={() => this.navigate('profile')}
             />
           }
