@@ -3,12 +3,8 @@ import ChatScreen from './ChatScreen';
 import MainPage from './MainPage';
 
 const App = createDrawerNavigator({
-  Home: {
-    screen: MainPage,
-  },
-  Chat: {
-    screen: ChatScreen,
-  },
+  Chat: ChatScreen,
+  Home: MainPage,
 });
 
 export default App;

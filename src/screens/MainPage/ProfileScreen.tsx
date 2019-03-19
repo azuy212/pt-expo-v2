@@ -5,9 +5,10 @@ import { Button } from 'react-native-elements';
 
 import { ICognitoUserAttributeData } from 'amazon-cognito-identity-js';
 import { showErrorAlert } from '../../services/error';
+import { Screens } from './MainPage';
 
 interface Props {
-  navigate: (screen: 'settings') => void;
+  navigate: (screen: Screens) => void;
 }
 
 interface State {
@@ -45,6 +46,7 @@ export default class ProfileScreen extends React.Component<Props, State> {
       this.setState({ profile, attr });
     } catch (err) {
       showErrorAlert('Error when getting Profile Info', err);
+      this.props.navigate('home');
     }
   }
 

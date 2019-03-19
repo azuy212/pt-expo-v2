@@ -339,8 +339,8 @@ export default class SignUpScreen extends React.Component<NavigationScreenProps,
                   <Dialog.Container visible={this.state.confirmCodeDialog}>
                     <Dialog.Title>Enter Confirmation Code</Dialog.Title>
                     <Dialog.Description>
-                      Please check your email and enter verification code you
-                      received.
+                      {`Verification Code has been sent to email: "${this.state.email}",
+                      Please check your email and provide verification code.`}
                     </Dialog.Description>
                     <Dialog.Input
                       label='Verification Code'
