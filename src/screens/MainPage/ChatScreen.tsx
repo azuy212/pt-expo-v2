@@ -1,38 +1,43 @@
 import React, { Component } from 'react';
 import {
+  Container,
+  Header,
+  Content,
+  Form,
+  Item,
+  Input,
+  Label,
+  Icon,
+  Textarea,
+  Button,
   Text,
-  StyleSheet,
-  View,
-  SafeAreaView,
-  KeyboardAvoidingView,
-} from 'react-native';
 
-import { Input, Button, Divider } from 'react-native-elements';
+} from 'native-base';
+import HeaderComponent from '../../components/HeaderComponent';
+import { NavigationScreenProps } from 'react-navigation';
+import { StyleSheet } from 'react-native';
 
-export default class ChatScreen extends Component {
+export default class ChatScreen extends Component<NavigationScreenProps> {
   render() {
     return (
-      <KeyboardAvoidingView
-        style={styles.container}
-        enabled={true}
-        behavior='padding'
-      >
-        {/* <View style={styles.container}> */}
-        <Input
-          leftIcon={{ name: 'subject' }}
-          placeholder='Subject'
-          shake={true}
-        />
-        <Input
-          leftIcon={{ name: 'message' }}
-          placeholder='Message'
-          shake={true}
-          multiline={true}
-        />
-        <Divider />
-        <Button title='Submit' />
-        {/* </View> */}
-      </KeyboardAvoidingView>
+      <Container style={styles.container}>
+        <HeaderComponent title='Chat' {...this.props} />
+        <Content contentContainerStyle={styles.containerContent}>
+          <Form>
+            <Item stackedLabel={true}>
+              <Label>Subject</Label>
+              <Input />
+            </Item>
+            <Item stackedLabel={true}>
+              <Label>Message</Label>
+              <Textarea rowSpan={5} style={styles.textArea} />
+            </Item>
+            <Button style={styles.button}>
+              <Text>Send</Text>
+            </Button>
+          </Form>
+        </Content>
+      </Container>
     );
   }
 }
@@ -40,7 +45,17 @@ export default class ChatScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+  },
+  containerContent: {
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  textArea: {
+    width: '100%',
+    paddingTop: 10,
+  },
+  button: {
+    marginTop: 10,
   },
 });
