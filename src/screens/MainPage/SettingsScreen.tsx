@@ -19,6 +19,7 @@ import Auth from '@aws-amplify/auth';
 
 import { Container, Item, Input, Icon } from 'native-base';
 import { NavigationScreenProps } from 'react-navigation';
+import HeaderComponent from '../../components/HeaderComponent';
 
 const { height } = Dimensions.get('window');
 
@@ -89,10 +90,11 @@ export default class SettingsScreen extends React.Component<NavigationScreenProp
   render() {
     return (
       <KeyboardAvoidingView
-        style={styles.infoContainer}
+        style={[styles.container, { margin: 0 }]}
         behavior='padding'
         enabled={true}
       >
+      <HeaderComponent {...this.props} title='Settings' />
         <View style={styles.container}>
           <View
             style={[styles.buttonStyle, { borderRadius: 4, marginBottom: 20 }]}
@@ -163,6 +165,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     justifyContent: 'center',
     flexDirection: 'column',
+    margin: 10,
   },
   input: {
     flex: 1,

@@ -6,17 +6,16 @@ import { Button } from 'react-native-elements';
 import { ICognitoUserAttributeData } from 'amazon-cognito-identity-js';
 import { showErrorAlert } from '../../services/error';
 import { Screens } from './MainPage';
-
-interface Props {
-  navigate: (screen: Screens) => void;
-}
+import { NavigationScreenProps } from 'react-navigation';
+import HeaderComponent from '../../components/HeaderComponent';
+import { Container, Content } from 'native-base';
 
 interface State {
   attr: ICognitoUserAttributeData[];
   profile: any;
 }
 
-export default class ProfileScreen extends React.Component<Props, State> {
+export default class ProfileScreen extends React.Component<NavigationScreenProps, State> {
   state: Readonly<State> = {
     profile: null,
     attr: [],
@@ -46,13 +45,16 @@ export default class ProfileScreen extends React.Component<Props, State> {
       this.setState({ profile, attr });
     } catch (err) {
       showErrorAlert('Error when getting Profile Info', err);
-      this.props.navigate('home');
+      this.props.navigation.navigate('Home');
     }
   }
 
   render() {
     return this.state.profile ? (
-      <View style={styles.container}>
+      <Container>
+        <Content>
+      <HeaderComponent {...this.props} title='Profile' />
+        <View style={styles.container}>
         <Text style={styles.textHeader}>{this.state.profile.username}</Text>
         {this.state.attr.map(att => (
           <View key={att.Name}>
@@ -63,12 +65,14 @@ export default class ProfileScreen extends React.Component<Props, State> {
         <View style={styles.buttonStyle}>
           <Button
             title='Settings'
-            onPress={() => this.props.navigate('settings')}
+            onPress={() => this.props.navigation.navigate('Settings')}
           />
         </View>
       </View>
+        </Content>
+      </Container>
     ) : (
-      <ActivityIndicator size='large' />
+      <ActivityIndicator style={[styles.container, { alignItems: 'center' }]} size='large' />
     );
   }
 }
@@ -96,5 +100,6 @@ const styles = StyleSheet.create({
   buttonStyle: {
     marginTop: 50,
     alignSelf: 'stretch',
+    margin: 10,
   },
 });
