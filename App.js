@@ -13,7 +13,7 @@ import config from "./aws-exports";
 Amplify.configure(config);
 
 export default createSwitchNavigator({
-  Authloading: AuthLoadingScreen,
+  AuthLoading: AuthLoadingScreen,
   Auth: AuthStackNavigator,
   App: AppStackNavigator
 });

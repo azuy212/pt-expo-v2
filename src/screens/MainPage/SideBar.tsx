@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppRegistry, Image, StatusBar } from 'react-native';
+import { AppRegistry, Image, StatusBar, Alert } from 'react-native';
 import {
   Button,
   Text,
@@ -10,7 +10,7 @@ import {
   Icon,
 } from 'native-base';
 import { DrawerItemsProps } from 'react-navigation';
-const routes = ['Home', 'Chat', 'Profile', 'Settings', 'SignOut'];
+const routes = ['Home', 'Chat', 'Profile', 'Settings', 'Sign Out'];
 
 const imageUri =
   'https://raw.githubusercontent.com/GeekyAnts/NativeBase-KitchenSink/master/assets';
@@ -19,11 +19,27 @@ import background from '../../images/background.png';
 import { Auth } from 'aws-amplify';
 
 export default class SideBar extends React.Component<DrawerItemsProps, any> {
+  // Sign out from the app
+  signOutAlert = async () => {
+    await Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out from the app?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Canceled'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => this.signOut() },
+      ],
+      { cancelable: false },
+    );
+  }
   signOut = async () => {
     await Auth.signOut()
       .then(() => {
         console.log('Sign out complete');
-        this.props.navigation.navigate('Authloading');
+        this.props.navigation.navigate('AuthLoading');
       })
       .catch(err => console.log('Error while signing out!', err));
   }
@@ -48,8 +64,8 @@ export default class SideBar extends React.Component<DrawerItemsProps, any> {
                 <ListItem
                   button={true}
                   onPress={() => {
-                    data === 'SignOut'
-                      ? this.signOut()
+                    data === 'Sign Out'
+                      ? this.signOutAlert()
                       : this.props.navigation.navigate(data);
                   }}
                 >
