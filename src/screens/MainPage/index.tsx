@@ -7,6 +7,8 @@ import HomeScreen from './HomeScreen';
 import ProfileScreen from './ProfileScreen';
 import SideBar from './SideBar';
 import SettingsScreen from './SettingsScreen';
+import AuthLoadingScreen from '../AuthLoadingScreen';
+import { AuthStackNavigator } from '../UserManagement';
 
 export default class MainApp extends Component<NavigationScreenProps> {
   state = {
@@ -34,6 +36,9 @@ const HomeScreenRouter = createDrawerNavigator(
     Chat: { screen: ChatScreen },
     Profile: { screen: ProfileScreen },
     Settings: { screen: SettingsScreen },
+    AuthLoading: AuthLoadingScreen,
+    Auth: AuthStackNavigator,
+    App: MainApp,
   },
   {
     contentComponent: props => <SideBar {...props} />,

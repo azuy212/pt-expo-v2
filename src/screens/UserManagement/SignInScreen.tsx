@@ -51,7 +51,7 @@ export default class SignInScreen extends React.Component<NavigationScreenProps,
     await Auth.signIn(username, password)
       .then(() => {
         this.setState({ loading: false });
-        this.props.navigation.navigate('Authloading');
+        this.props.navigation.navigate('AuthLoading');
       })
       .catch((err) => {
         this.setState({ loading: false });
