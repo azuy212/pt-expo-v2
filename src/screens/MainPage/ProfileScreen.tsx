@@ -5,7 +5,6 @@ import { Button } from 'react-native-elements';
 
 import { ICognitoUserAttributeData } from 'amazon-cognito-identity-js';
 import { showErrorAlert } from '../../services/error';
-import { Screens } from './MainPage';
 import { NavigationScreenProps } from 'react-navigation';
 import HeaderComponent from '../../components/HeaderComponent';
 import { Container, Content } from 'native-base';

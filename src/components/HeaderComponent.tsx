@@ -5,6 +5,8 @@ import { StatusBar } from 'react-native';
 
 import { headerHeight } from '../theme/header';
 
+const statusBarHeight = StatusBar.currentHeight || 0;
+
 interface Props {
   title: string;
 }
@@ -14,8 +16,8 @@ type AllProps = Props & NavigationScreenProps;
 export default class HeaderComponent extends Component<AllProps> {
   render() {
     return (
-        <Header style={{ marginTop: StatusBar.currentHeight, height: headerHeight }}>
-        <Left>
+        <Header style={{ height: headerHeight + statusBarHeight }}>
+        <Left style={{ marginTop: statusBarHeight }}>
           <Button
             transparent={true}
             onPress={() => this.props.navigation.openDrawer()}
@@ -23,7 +25,7 @@ export default class HeaderComponent extends Component<AllProps> {
             <Icon name='menu' />
           </Button>
         </Left>
-        <Body>
+        <Body style={{ marginTop: statusBarHeight }}>
           <Title>{this.props.title}</Title>
         </Body>
         <Right />
