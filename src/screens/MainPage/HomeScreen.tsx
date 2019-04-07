@@ -1,30 +1,21 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, Image } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 
-import logo from '../../images/logo.png';
 import HeaderComponent from '../../components/HeaderComponent';
-import { headerHeight } from '../../theme/header';
-import { Icon } from 'native-base';
+import { Container, Content } from 'native-base';
+import CourseSelection from './CourseSelection';
 
 export default class HomeScreen extends Component<NavigationScreenProps> {
-  static navigationOptions = {
-    drawerLabel: 'Home',
-    drawerIcon: ({ tintColor }: {tintColor: any}) => (
-      <Icon name='home' />
-    ),
-  };
   render() {
     return (
-      <View>
+      <Container>
         <HeaderComponent {...this.props} title='Home' />
-        <View style={styles.container}>
-          <View style={styles.logoContainer}>
-            <Image style={styles.logoImage} source={logo} />
-            <Text style={styles.textStyle}>Welcome to Pocket Tutor</Text>
-          </View>
-        </View>
-      </View>
+        <Text style={styles.textStyle}>Select Course</Text>
+        <Content contentContainerStyle={styles.container}>
+          <CourseSelection {...this.props} />
+        </Content>
+      </Container>
     );
   }
 }
@@ -34,20 +25,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: headerHeight,
-    backgroundColor: '#fff',
-  },
-  logoContainer: {
-    flex: 1,
-    paddingBottom: 50,
-  },
-  logoImage: {
-    width: 300,
-    height: 200,
-    alignSelf: 'center',
   },
   textStyle: {
     fontSize: 30,
     fontWeight: 'bold',
+    alignSelf: 'center',
+    marginTop: 50,
   },
 });

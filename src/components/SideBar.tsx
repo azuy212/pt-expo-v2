@@ -1,21 +1,24 @@
 import React from 'react';
-import { AppRegistry, Image, StatusBar, Alert } from 'react-native';
+import { Image, Alert } from 'react-native';
 import {
-  Button,
   Text,
   Container,
   List,
   ListItem,
   Content,
   Icon,
+  Label,
 } from 'native-base';
 import { DrawerItemsProps } from 'react-navigation';
-const routes = ['Home', 'Chat', 'Profile', 'Settings', 'Sign Out'];
+const routes = [
+{ label: 'Home', icon: 'home' },
+{ label: 'Chat', icon: 'chatboxes' },
+{ label: 'Profile', icon: 'person' },
+{ label: 'Settings', icon: 'settings' },
+{ label: 'Sign Out', icon: 'log-out' },
+];
 
-const imageUri =
-  'https://raw.githubusercontent.com/GeekyAnts/NativeBase-KitchenSink/master/assets';
-
-import background from '../../images/background.png';
+import background from '../images/background.png';
 import { Auth } from 'aws-amplify';
 
 export default class SideBar extends React.Component<DrawerItemsProps, any> {
@@ -59,17 +62,18 @@ export default class SideBar extends React.Component<DrawerItemsProps, any> {
           <List
             dataArray={routes}
             contentContainerStyle={{ marginTop: 120 }}
-            renderRow={(data) => {
+            renderRow={(data: {label: string, icon: string}) => {
               return (
                 <ListItem
                   button={true}
                   onPress={() => {
-                    data === 'Sign Out'
+                    data.label === 'Sign Out'
                       ? this.signOutAlert()
-                      : this.props.navigation.navigate(data);
+                      : this.props.navigation.navigate(data.label);
                   }}
                 >
-                  <Text>{data}</Text>
+                  <Icon name={data.icon} style={{ marginRight: 10 }} />
+                  <Text>{data.label}</Text>
                 </ListItem>
               );
             }}
