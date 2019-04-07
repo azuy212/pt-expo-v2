@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: headerHeight,
+    backgroundColor: '#fff',
   },
   logoContainer: {
     flex: 1,

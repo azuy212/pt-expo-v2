@@ -7,28 +7,6 @@ import HomeScreen from './HomeScreen';
 import ProfileScreen from './ProfileScreen';
 import SideBar from './SideBar';
 import SettingsScreen from './SettingsScreen';
-import AuthLoadingScreen from '../AuthLoadingScreen';
-import { AuthStackNavigator } from '../UserManagement';
-
-export default class MainApp extends Component<NavigationScreenProps> {
-  state = {
-    isReady: false,
-  };
-  async componentWillMount() {
-    await Font.loadAsync({
-      Roboto: require('native-base/Fonts/Roboto.ttf'),
-      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-      Ionicons: require('native-base/Fonts/Ionicons.ttf'),
-    });
-    this.setState({ isReady: true });
-  }
-  render() {
-    if (!this.state.isReady) {
-      return <AppLoading />;
-    }
-    return <HomeScreenRouter />;
-  }
-}
 
 const HomeScreenRouter = createDrawerNavigator(
   {
@@ -36,11 +14,10 @@ const HomeScreenRouter = createDrawerNavigator(
     Chat: { screen: ChatScreen },
     Profile: { screen: ProfileScreen },
     Settings: { screen: SettingsScreen },
-    AuthLoading: AuthLoadingScreen,
-    Auth: AuthStackNavigator,
-    App: MainApp,
   },
   {
     contentComponent: props => <SideBar {...props} />,
   },
 );
+
+export default HomeScreenRouter;
