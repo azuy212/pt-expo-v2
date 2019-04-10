@@ -59,6 +59,8 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
     if (selectedSubsection === '') {
       return showErrorAlert('Select all fields', 'Please select SubSection of Section');
     }
+
+    this.props.navigation.navigate('LectureDetail', { selectedTitle, selectedSection, selectedSubsection });
   }
 
   render() {
