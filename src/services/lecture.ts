@@ -1,58 +1,56 @@
-interface ISubsection {
-  id_subsection: number;
-  id_file: string;
-  class: string;
-  course: string;
-  subject: string;
-  chapter: number;
-  ch_tittle: string;
-  section: string;
-  subsection: string;
-  file_name: string;
-  lecture_video: string;
-  keyword: string;
-  flag: number;
-  username: string;
-  input_time: string;
-  [key: string]: any;
-}
+import { ISubsection } from '../models/subsection';
+import { getDistinctValues, generateDropDownOptions } from './common';
 
 const subSectionData: ISubsection[] = require('../../assets/trans_subsection.json');
 
 export default class LectureService {
+  constructor(private selectedClass: string, private selectedSubject: string) {}
 
-  getTitles(courseKey: string) {
-    const titles = this.getDistinctValues(
-        subSectionData.filter(data => data.course === courseKey),
+  getTitles() {
+    const titles = generateDropDownOptions(
+      getDistinctValues(
+        subSectionData.filter(
+          data =>
+            data.class.toLowerCase() === this.selectedClass &&
+            data.subject.toLowerCase() === this.selectedSubject,
+        ),
         'ch_tittle',
+      ),
     );
-    return this.generateDropDownOptions(titles);
+    titles.unshift({ label: 'Select Title', value: '' });
+    return titles;
   }
-  getSections(selectedTitle: any) {
-    const sections = this.getDistinctValues(
-        subSectionData.filter(data => data.ch_tittle.toLowerCase() === selectedTitle),
+
+  getSections(selectedTitle: string) {
+    const sections = generateDropDownOptions(
+      getDistinctValues(
+        subSectionData.filter(
+          data =>
+            data.class.toLowerCase() === this.selectedClass &&
+            data.subject.toLowerCase() === this.selectedSubject &&
+            data.ch_tittle.toLowerCase() === selectedTitle,
+        ),
         'section',
-      );
-    return this.generateDropDownOptions(sections);
+      ),
+    );
+    sections.unshift({ label: 'Select Section', value: '' });
+    return sections;
   }
-  getSubsections(selectedSection: string) {
-    const subsections = this.getDistinctValues(
-        subSectionData.filter(data => data.section.toLowerCase() === selectedSection),
+
+  getSubsections(selectedTitle: string, selectedSection: string) {
+    const subsections = generateDropDownOptions(
+      getDistinctValues(
+        subSectionData.filter(
+          data =>
+            data.class.toLowerCase() === this.selectedClass &&
+            data.subject.toLowerCase() === this.selectedSubject &&
+            data.ch_tittle.toLowerCase() === selectedTitle &&
+            data.section.toLowerCase() === selectedSection,
+        ),
         'subsection',
-      );
-    return this.generateDropDownOptions(subsections);
-  }
-
-  getDistinctValues(data: ISubsection[], key: string) {
-    return data.reduce((acc: string[], curr) => {
-      if (!acc.includes(curr[key])) {
-        acc.push(curr[key]);
-      }
-      return acc;
-    },                 []);
-  }
-
-  generateDropDownOptions(list: string[]) {
-    return list.map(i => ({ label: i, value: i.toLowerCase() }));
+      ),
+    );
+    subsections.unshift({ label: 'Select SubSection', value: '' });
+    return subsections;
   }
 }

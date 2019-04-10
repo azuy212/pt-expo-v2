@@ -6,11 +6,15 @@ import HeaderComponent from '../../components/HeaderComponent';
 import { Container, Content } from 'native-base';
 import CourseSelection from './CourseSelection';
 
+/******************************** Screen Title /********************************/
+const SCREEN_TITLE = 'Home';
+/******************************************************************************/
+
 export default class HomeScreen extends Component<NavigationScreenProps> {
   render() {
     return (
       <Container>
-        <HeaderComponent {...this.props} title='Home' />
+        <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Course</Text>
         <Content contentContainerStyle={styles.container}>
           <CourseSelection {...this.props} />
