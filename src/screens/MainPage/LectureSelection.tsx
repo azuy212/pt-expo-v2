@@ -6,13 +6,17 @@ import { Container, Text, Content } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
 import { StyleSheet } from 'react-native';
 
-const lectureService = new LectureService();
+/******************************** Screen Title /********************************/
+const SCREEN_TITLE = 'Lectures';
+/******************************************************************************/
 
 interface IState {
   selectedTitle: string;
   selectedSection: string;
   selectedSubsection: string;
 }
+
+type StateKeys = keyof IState;
 
 export default class LectureSelection extends Component<NavigationScreenProps, IState> {
   state = {
@@ -21,38 +25,47 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
     selectedSubsection: '',
   };
 
-  onClassChange = (itemValue: any) => {
-    this.setState({ selectedTitle: itemValue });
+  private lectureService: LectureService;
+
+  constructor(props: NavigationScreenProps) {
+    super(props);
+    const { params } = props.navigation.state;
+    if (params) {
+      this.lectureService = new LectureService(params.selectedClass, params.selectedSubject);
+    } else {
+      this.lectureService = new LectureService('', '');
+    }
   }
-  onSubjectChange = (itemValue: any) => {
-    this.setState({ selectedSection: itemValue });
+
+  onSelectionChange(key: StateKeys, value: string) {
+    this.setState({
+      [key]: value,
+    } as Pick<IState, StateKeys>);
   }
-  onTypeSelection = (itemValue: any) => {
-    this.setState({ selectedSubsection: itemValue });
-  }
+
   render() {
-    const { params } = this.props.navigation.state;
+    const { selectedTitle, selectedSection, selectedSubsection } = this.state;
     return (
       <Container>
-        <HeaderComponent {...this.props} title='Home' />
+        <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Lecture</Text>
         <Content contentContainerStyle={styles.container}>
-        <Dropdown
-          selectedValue={this.state.selectedTitle}
-          list={lectureService.getTitles(params && params.courseKey)}
-          onValueChange={this.onClassChange}
-        />
-        <Dropdown
-          selectedValue={this.state.selectedSection}
-          list={lectureService.getSections(this.state.selectedTitle)}
-          onValueChange={this.onSubjectChange}
-        />
-        <Dropdown
-          selectedValue={this.state.selectedSubsection}
-          list={lectureService.getSubsections(this.state.selectedSection)}
-          onValueChange={this.onTypeSelection}
-        />
-        </Content>
+          <Dropdown
+            selectedValue={selectedTitle}
+            list={this.lectureService.getTitles()}
+            onValueChange={itemValue => this.onSelectionChange('selectedTitle', itemValue)}
+          />
+          <Dropdown
+            selectedValue={selectedSection}
+            list={this.lectureService.getSections(selectedTitle)}
+            onValueChange={itemValue => this.onSelectionChange('selectedSection', itemValue)}
+          />
+          <Dropdown
+            selectedValue={selectedSubsection}
+            list={this.lectureService.getSubsections(selectedTitle, selectedSection)}
+            onValueChange={itemValue => this.onSelectionChange('selectedSubsection', itemValue)}
+          />
+          </Content>
       </Container>
     );
   }

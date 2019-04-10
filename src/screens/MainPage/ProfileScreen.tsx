@@ -9,6 +9,10 @@ import { NavigationScreenProps } from 'react-navigation';
 import HeaderComponent from '../../components/HeaderComponent';
 import { Container, Content } from 'native-base';
 
+/******************************** Screen Title /********************************/
+const SCREEN_TITLE = 'Profile';
+/******************************************************************************/
+
 interface State {
   attr: ICognitoUserAttributeData[];
   profile: any;
@@ -52,7 +56,7 @@ export default class ProfileScreen extends React.Component<NavigationScreenProps
     return this.state.profile ? (
       <Container>
         <Content>
-      <HeaderComponent {...this.props} title='Profile' />
+      <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <View style={styles.container}>
         <Text style={styles.textHeader}>{this.state.profile.username}</Text>
         {this.state.attr.map(att => (

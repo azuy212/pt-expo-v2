@@ -21,6 +21,10 @@ import { Container, Item, Input, Icon } from 'native-base';
 import { NavigationScreenProps } from 'react-navigation';
 import HeaderComponent from '../../components/HeaderComponent';
 
+/******************************** Screen Title /********************************/
+const SCREEN_TITLE = 'Settings';
+/******************************************************************************/
+
 const { height } = Dimensions.get('window');
 
 interface State {
@@ -94,7 +98,7 @@ export default class SettingsScreen extends React.Component<NavigationScreenProp
         behavior='padding'
         enabled={true}
       >
-      <HeaderComponent {...this.props} title='Settings' />
+      <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <View style={styles.container}>
           <View
             style={[styles.buttonStyle, { borderRadius: 4, marginBottom: 20 }]}
