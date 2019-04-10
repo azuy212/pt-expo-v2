@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { Font, AppLoading } from 'expo';
 import { createDrawerNavigator, NavigationScreenProps } from 'react-navigation';
 
-import ChatScreen from './ChatScreen';
 import HomeScreen from './HomeScreen';
-import ProfileScreen from './ProfileScreen';
+import ChatScreen from '../Common/ChatScreen';
+import ProfileScreen from '../Common/ProfileScreen';
+import SettingsScreen from '../Common/SettingsScreen';
+import LectureSelection from '../Lecture/LectureSelection';
+import CourseSelection from '../Course/CourseSelection';
 import SideBar from '../../components/SideBar';
-import SettingsScreen from './SettingsScreen';
-import LectureSelection from './LectureSelection';
 
 const HomeScreenRouter = createDrawerNavigator(
   {
@@ -15,6 +16,7 @@ const HomeScreenRouter = createDrawerNavigator(
     Chat: { screen: ChatScreen },
     Profile: { screen: ProfileScreen },
     Settings: { screen: SettingsScreen },
+    CourseSelection: { screen: CourseSelection },
     LectureSelection: { screen: LectureSelection },
   },
   {

@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
+import { NavigationScreenProps } from 'react-navigation';
+import { Button, Container, Content, Text } from 'native-base';
+
 import Dropdown from '../../components/Dropdown';
 import LectureService from '../../services/lecture';
-import { NavigationScreenProps } from 'react-navigation';
-import { Container, Text, Content } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
-import { StyleSheet } from 'react-native';
+import { showErrorAlert } from '../../services/error';
 
 /******************************** Screen Title /********************************/
-const SCREEN_TITLE = 'Lectures';
+const SCREEN_TITLE = 'Lecture';
 /******************************************************************************/
 
 interface IState {
@@ -30,9 +32,11 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
   constructor(props: NavigationScreenProps) {
     super(props);
     const { params } = props.navigation.state;
+
     if (params) {
       this.lectureService = new LectureService(params.selectedClass, params.selectedSubject);
     } else {
+      // need to throw error
       this.lectureService = new LectureService('', '');
     }
   }
@@ -41,6 +45,20 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
     this.setState({
       [key]: value,
     } as Pick<IState, StateKeys>);
+  }
+
+  nextButtonPressed = () => {
+    const { selectedTitle, selectedSection, selectedSubsection } = this.state;
+
+    if (selectedTitle === '') {
+      return showErrorAlert('Select all fields', 'Please select Title of Lecture');
+    }
+    if (selectedSection === '') {
+      return showErrorAlert('Select all fields', 'Please select Section of Title');
+    }
+    if (selectedSubsection === '') {
+      return showErrorAlert('Select all fields', 'Please select SubSection of Section');
+    }
   }
 
   render() {
@@ -65,7 +83,10 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
             list={this.lectureService.getSubsections(selectedTitle, selectedSection)}
             onValueChange={itemValue => this.onSelectionChange('selectedSubsection', itemValue)}
           />
-          </Content>
+          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
+            <Text>Next</Text>
+          </Button>
+        </Content>
       </Container>
     );
   }
