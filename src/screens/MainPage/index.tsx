@@ -10,18 +10,21 @@ import LectureSelection from '../Lecture/LectureSelection';
 import CourseSelection from '../Course/CourseSelection';
 import SideBar from '../../components/SideBar';
 import LectureDetail from '../Lecture/LectureDetail';
+import LectureVideo from '../Lecture/LectureVideo';
 
 const HomeScreenRouter = createDrawerNavigator(
   {
-    LectureDetail: { screen: LectureDetail },
     Home: { screen: HomeScreen },
     Chat: { screen: ChatScreen },
     Profile: { screen: ProfileScreen },
     Settings: { screen: SettingsScreen },
     CourseSelection: { screen: CourseSelection },
     LectureSelection: { screen: LectureSelection },
+    LectureDetail: { screen: LectureDetail },
+    LectureVideo: { screen: LectureVideo },
   },
   {
+    initialRouteName:'Home',
     contentComponent: props => <SideBar {...props} />,
   },
 );

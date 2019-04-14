@@ -10,9 +10,9 @@ export default class CourseService {
     classes.unshift({ label: 'Select Class', value: '' });
     return classes;
   }
-  getSubjects(selectedClass: any) {
+  getSubjects(sClass: any) {
     const subjects: IDropDownOptions = generateDropDownOptions(
-      getDistinctValues(subSectionData.filter(data => data.class.toLowerCase() === selectedClass), 'subject'),
+      getDistinctValues(subSectionData.filter(data => data.class.toLowerCase() === sClass), 'subject'),
     );
     subjects.unshift({ label: 'Select Subject', value: '' });
     return subjects;

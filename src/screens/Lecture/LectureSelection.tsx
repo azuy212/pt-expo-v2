@@ -13,31 +13,34 @@ const SCREEN_TITLE = 'Lecture';
 /******************************************************************************/
 
 interface IState {
-  selectedTitle: string;
-  selectedSection: string;
-  selectedSubsection: string;
+  sTitle: string;
+  sSection: string;
+  sSubsection: string;
 }
 
 type StateKeys = keyof IState;
 
 export default class LectureSelection extends Component<NavigationScreenProps, IState> {
   state = {
-    selectedTitle: '',
-    selectedSection: '',
-    selectedSubsection: '',
+    sTitle: '',
+    sSection: '',
+    sSubsection: '',
   };
 
-  private lectureService: LectureService;
+  private lectureService!: LectureService;
 
   constructor(props: NavigationScreenProps) {
     super(props);
     const { params } = props.navigation.state;
 
-    if (params) {
-      this.lectureService = new LectureService(params.selectedClass, params.selectedSubject);
+    if (params && params.sClass && params.sSubject) {
+      this.lectureService = new LectureService(params.sClass, params.sSubject);
     } else {
-      // need to throw error
-      this.lectureService = new LectureService('', '');
+      showErrorAlert(
+        'Class or Subject not found',
+        'No Class or Subject is s, Please s them first',
+      );
+      this.props.navigation.navigate('Home');
     }
   }
 
@@ -48,42 +51,46 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
   }
 
   nextButtonPressed = () => {
-    const { selectedTitle, selectedSection, selectedSubsection } = this.state;
+    const { sClass, sSubject } = this.props.navigation.state.params!;
+    const { sTitle, sSection, sSubsection } = this.state;
 
-    if (selectedTitle === '') {
+    if (sTitle === '') {
       return showErrorAlert('Select all fields', 'Please select Title of Lecture');
     }
-    if (selectedSection === '') {
+    if (sSection === '') {
       return showErrorAlert('Select all fields', 'Please select Section of Title');
     }
-    if (selectedSubsection === '') {
-      return showErrorAlert('Select all fields', 'Please select SubSection of Section');
-    }
 
-    this.props.navigation.navigate('LectureDetail', { selectedTitle, selectedSection, selectedSubsection });
+    this.props.navigation.navigate('LectureDetail', {
+      sClass,
+      sSubject,
+      sTitle,
+      sSection,
+      sSubsection,
+    });
   }
 
   render() {
-    const { selectedTitle, selectedSection, selectedSubsection } = this.state;
+    const { sTitle, sSection, sSubsection } = this.state;
     return (
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Lecture</Text>
         <Content contentContainerStyle={styles.container}>
           <Dropdown
-            selectedValue={selectedTitle}
+            sValue={sTitle}
             list={this.lectureService.getTitles()}
-            onValueChange={itemValue => this.onSelectionChange('selectedTitle', itemValue)}
+            onValueChange={itemValue => this.onSelectionChange('sTitle', itemValue)}
           />
           <Dropdown
-            selectedValue={selectedSection}
-            list={this.lectureService.getSections(selectedTitle)}
-            onValueChange={itemValue => this.onSelectionChange('selectedSection', itemValue)}
+            sValue={sSection}
+            list={this.lectureService.getSections(sTitle)}
+            onValueChange={itemValue => this.onSelectionChange('sSection', itemValue)}
           />
           <Dropdown
-            selectedValue={selectedSubsection}
-            list={this.lectureService.getSubsections(selectedTitle, selectedSection)}
-            onValueChange={itemValue => this.onSelectionChange('selectedSubsection', itemValue)}
+            sValue={sSubsection}
+            list={this.lectureService.getSubsections(sTitle, sSection)}
+            onValueChange={itemValue => this.onSelectionChange('sSubsection', itemValue)}
           />
           <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
             <Text>Next</Text>

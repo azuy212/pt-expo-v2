@@ -1,35 +1,77 @@
 import React, { Component } from 'react';
-import { Text, View, WebView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Container, Content } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
-import { headerHeight } from '../../theme/header';
+import LectureService, { FilesBaseUrl } from '../../services/lecture';
+import { showErrorAlert } from '../../services/error';
+import { convertToTitleCase } from '../../services/common';
+import WebViewFlex from '../../components/WebViewFlex';
 
 interface IState {
-  params: { selectedTitle: string };
+  filePath: string;
+  videoPath: string;
+  sTitle: string;
 }
 
 export default class LectureDetail extends Component<NavigationScreenProps, IState> {
   state = {
-    params: { selectedTitle: '' },
+    filePath: '',
+    videoPath: '',
+    sTitle: 'Lecture Detail',
   };
+  private lectureService!: LectureService;
+
   constructor(props: NavigationScreenProps) {
     super(props);
+
     const { params } = props.navigation.state;
-    this.state.params = params as any;
-    console.log('state', params);
+    if (params && params.sClass && params.sSubject) {
+      this.lectureService = new LectureService(params.sClass, params.sSubject);
+    } else {
+      showErrorAlert(
+        'Class or Subject not found',
+        'No Class or Subject is selected, Please select them first',
+      );
+      this.props.navigation.navigate('Home');
+    }
+  }
+  componentDidMount() {
+    const params = this.props.navigation.state.params;
+    if (params) {
+      const { sTitle, sSection, sSubsection } = params;
+      const lectureDetails = this.lectureService.getLectureDetail(sTitle, sSection, sSubsection);
+      if (lectureDetails) {
+        const filesPath = this.lectureService.createFilePath(
+          lectureDetails.course,
+          lectureDetails.id_file,
+          lectureDetails.chapter,
+          lectureDetails.file_name,
+          lectureDetails.lecture_video,
+        );
+        this.setState({ ...filesPath, sTitle: convertToTitleCase(sSubsection || sSection) });
+      }
+    }
+  }
+  videoIconPress = () => {
+    this.props.navigation.navigate('LectureVideo', {
+      videoUrl: `${FilesBaseUrl}/${this.state.videoPath}`,
+      sTitle: this.state.sTitle,
+    });
   }
   render() {
     return (
-        <WebView
-            onLoadStart={() => console.log('loading start')}
-            onLoadEnd={() => console.log('loading end')}
-            source={{
-              uri:
-                'http://34.205.144.242/simplyandroid_php/app/file/subsection/XPH/XPHC1/XPHC1S1/XPHC1S1.htm',
-            }}
-            style={{ margin: 10 }}
+      <Container>
+        <HeaderComponent
+          {...this.props}
+          title={this.state.sTitle}
+          isVideoAvailable={true}
+          videoIconPress={this.videoIconPress}
         />
+        <Content contentContainerStyle={styles.container}>
+          <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
+        </Content>
+      </Container>
     );
   }
 }
@@ -37,7 +79,6 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
   },
   textStyle: {
@@ -45,5 +86,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     marginTop: 50,
+  },
+  webView: {
+    flex: 8,
   },
 });

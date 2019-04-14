@@ -4,7 +4,7 @@ import { Picker, StyleSheet } from 'react-native';
 interface IProps {
   onValueChange: (itemValue: any, itemPosition: number) => void;
   list: { label: string; value: string }[];
-  selectedValue: string;
+  sValue: string;
 }
 export default class Dropdown extends Component<IProps> {
   state = {
@@ -13,7 +13,7 @@ export default class Dropdown extends Component<IProps> {
   render() {
     return (
       <Picker
-        selectedValue={this.props.selectedValue}
+        selectedValue={this.props.sValue}
         style={styles.dropdown}
         onValueChange={this.props.onValueChange}
         mode='dropdown'
