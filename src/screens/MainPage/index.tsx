@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Font, AppLoading } from 'expo';
-import { createDrawerNavigator, NavigationScreenProps } from 'react-navigation';
+import { createDrawerNavigator, NavigationScreenProps, createStackNavigator } from 'react-navigation';
 
 import HomeScreen from './HomeScreen';
 import ChatScreen from '../Common/ChatScreen';
@@ -12,9 +12,9 @@ import SideBar from '../../components/SideBar';
 import LectureDetail from '../Lecture/LectureDetail';
 import LectureVideo from '../Lecture/LectureVideo';
 
-const HomeScreenRouter = createDrawerNavigator(
+const ScreenNavigators = createStackNavigator(
   {
-    Home: { screen: HomeScreen },
+    Home: { screen: CourseSelection },
     Chat: { screen: ChatScreen },
     Profile: { screen: ProfileScreen },
     Settings: { screen: SettingsScreen },
@@ -24,7 +24,18 @@ const HomeScreenRouter = createDrawerNavigator(
     LectureVideo: { screen: LectureVideo },
   },
   {
-    initialRouteName:'Home',
+    headerMode: 'none',
+    navigationOptions: {
+      headerTransparent: true,
+    },
+  },
+);
+
+const HomeScreenRouter = createDrawerNavigator(
+  {
+    Main: { screen: ScreenNavigators },
+  },
+  {
     contentComponent: props => <SideBar {...props} />,
   },
 );
