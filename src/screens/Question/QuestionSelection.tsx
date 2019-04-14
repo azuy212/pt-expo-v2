@@ -13,26 +13,26 @@
 // const lectureService = new LectureService();
 
 // interface IState {
-//   selectedSection: string;
-//   selectedChapter: string;
-//   selectedType: string;
+//   sSection: string;
+//   sChapter: string;
+//   sType: string;
 // }
 
 // export default class LectureSelection extends Component<NavigationScreenProps, IState> {
 //   state = {
-//     selectedSection: '',
-//     selectedChapter: '',
-//     selectedType: '',
+//     sSection: '',
+//     sChapter: '',
+//     sType: '',
 //   };
 
 //   onClassChange = (itemValue: any) => {
-//     this.setState({ selectedSection: itemValue });
+//     this.setState({ sSection: itemValue });
 //   }
 //   onSubjectChange = (itemValue: any) => {
-//     this.setState({ selectedChapter: itemValue });
+//     this.setState({ sChapter: itemValue });
 //   }
 //   onTypeSelection = (itemValue: any) => {
-//     this.setState({ selectedType: itemValue });
+//     this.setState({ sType: itemValue });
 //   }
 //   render() {
 //     const { params } = this.props.navigation.state;
@@ -42,18 +42,18 @@
 //         <Text style={styles.textStyle}>Select Lecture</Text>
 //         <Content contentContainerStyle={styles.container}>
 //         <Dropdown
-//           selectedValue={this.state.selectedSection}
+//           sValue={this.state.sSection}
 //           list={lectureService.getTitles('', '')}
 //           onValueChange={this.onClassChange}
 //         />
 //         <Dropdown
-//           selectedValue={this.state.selectedChapter}
-//           list={lectureService.getSections(this.state.selectedSection)}
+//           sValue={this.state.sChapter}
+//           list={lectureService.getSections(this.state.sSection)}
 //           onValueChange={this.onSubjectChange}
 //         />
 //         <Dropdown
-//           selectedValue={this.state.selectedType}
-//           list={lectureService.getSubsections(this.state.selectedChapter)}
+//           sValue={this.state.sType}
+//           list={lectureService.getSubsections(this.state.sChapter)}
 //           onValueChange={this.onTypeSelection}
 //         />
 //         </Content>

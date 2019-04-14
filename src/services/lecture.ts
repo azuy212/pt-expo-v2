@@ -3,16 +3,18 @@ import { getDistinctValues, generateDropDownOptions } from './common';
 
 const subSectionData: ISubsection[] = require('../../assets/trans_subsection.json');
 
+export const FilesBaseUrl = 'https://s3.amazonaws.com/pocket-tutor-assets/subsection';
+
 export default class LectureService {
-  constructor(private selectedClass: string, private selectedSubject: string) {}
+  constructor(private sClass: string, private sSubject: string) {}
 
   getTitles() {
     const titles = generateDropDownOptions(
       getDistinctValues(
         subSectionData.filter(
           data =>
-            data.class.toLowerCase() === this.selectedClass &&
-            data.subject.toLowerCase() === this.selectedSubject,
+            data.class.toLowerCase() === this.sClass &&
+            data.subject.toLowerCase() === this.sSubject,
         ),
         'ch_tittle',
       ),
@@ -21,14 +23,14 @@ export default class LectureService {
     return titles;
   }
 
-  getSections(selectedTitle: string) {
+  getSections(sTitle: string) {
     const sections = generateDropDownOptions(
       getDistinctValues(
         subSectionData.filter(
           data =>
-            data.class.toLowerCase() === this.selectedClass &&
-            data.subject.toLowerCase() === this.selectedSubject &&
-            data.ch_tittle.toLowerCase() === selectedTitle,
+            data.class.toLowerCase() === this.sClass &&
+            data.subject.toLowerCase() === this.sSubject &&
+            data.ch_tittle.toLowerCase() === sTitle,
         ),
         'section',
       ),
@@ -37,20 +39,54 @@ export default class LectureService {
     return sections;
   }
 
-  getSubsections(selectedTitle: string, selectedSection: string) {
+  getSubsections(sTitle: string, sSection: string) {
     const subsections = generateDropDownOptions(
       getDistinctValues(
         subSectionData.filter(
           data =>
-            data.class.toLowerCase() === this.selectedClass &&
-            data.subject.toLowerCase() === this.selectedSubject &&
-            data.ch_tittle.toLowerCase() === selectedTitle &&
-            data.section.toLowerCase() === selectedSection,
+            data.class.toLowerCase() === this.sClass &&
+            data.subject.toLowerCase() === this.sSubject &&
+            data.ch_tittle.toLowerCase() === sTitle &&
+            data.section.toLowerCase() === sSection,
         ),
         'subsection',
       ),
     );
     subsections.unshift({ label: 'Select SubSection', value: '' });
     return subsections;
+  }
+
+  getLectureDetail(sTitle: string, sSection: string, sSubsection: string) {
+    return subSectionData.find(
+      data =>
+        data.class.toLowerCase() === this.sClass &&
+        data.subject.toLowerCase() === this.sSubject &&
+        data.ch_tittle.toLowerCase() === sTitle &&
+        data.section.toLowerCase() === sSection &&
+        data.subsection.toLowerCase() === sSubsection,
+    );
+  }
+
+  createFilePath(sCourse: string, sFileId: string, sChapter: number, sFileName: string, sVideoName: string) {
+    const path: string[] = [];
+    path.push(sCourse);
+    path.push(`${sCourse}C${sChapter}`);
+
+    const section = sFileId.split('-');
+    path.push(sCourse + section[0]);
+    if (section[1]) {
+      path.push(sCourse + sFileId);
+    }
+
+    path.push(sFileName);
+
+    const filePath = path.join('/');
+
+    path.pop();
+    path.push(sVideoName);
+
+    const videoPath = path.join('/');
+
+    return { filePath, videoPath };
   }
 }

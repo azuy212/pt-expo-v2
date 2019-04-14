@@ -27,3 +27,9 @@ export function getDistinctValues(data: ISubsection[], key: string) {
 export function generateDropDownOptions(list: string[]): IDropDownOptions {
   return list.map(i => ({ label: i, value: i.toLowerCase() }));
 }
+
+export function convertToTitleCase(text: string) {
+  return text.replace(/(\w)(\w*)/g, (_, i, r) => {
+    return i.toUpperCase() + (r != null ? r : '');
+  });
+}

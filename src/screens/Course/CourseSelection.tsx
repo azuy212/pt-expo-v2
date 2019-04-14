@@ -13,18 +13,18 @@ const SCREEN_TITLE = 'Course';
 /******************************************************************************/
 
 interface IState {
-  selectedClass: string;
-  selectedSubject: string;
-  selectedType: string;
+  sClass: string;
+  sSubject: string;
+  sType: string;
 }
 
 type StateKeys = keyof IState;
 
 export default class CourseSelection extends Component<NavigationScreenProps, IState> {
   state = {
-    selectedClass: '',
-    selectedSubject: '',
-    selectedType: '',
+    sClass: '',
+    sSubject: '',
+    sType: '',
   };
 
   private courseService: CourseService;
@@ -42,46 +42,46 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
   }
 
   nextButtonPressed = () => {
-    const { selectedClass, selectedSubject, selectedType } = this.state;
+    const { sClass, sSubject, sType } = this.state;
 
-    if (selectedClass === '') {
+    if (sClass === '') {
       return showErrorAlert('Select all fields', 'Please select Class');
     }
-    if (selectedSubject === '') {
+    if (sSubject === '') {
       return showErrorAlert('Select all fields', 'Please select Subject');
     }
-    if (selectedType === '') {
+    if (sType === '') {
       return showErrorAlert('Select all fields', 'Please select Lecture/Questions');
     }
 
-    if (selectedType === 'lectures') {
-      this.props.navigation.navigate('LectureSelection', { selectedClass, selectedSubject });
+    if (sType === 'lectures') {
+      this.props.navigation.navigate('LectureSelection', { sClass, sSubject });
     } else {
       showErrorAlert('Not Implemented', 'Questions are not yet implemented');
     }
   }
 
   render() {
-    const { selectedClass, selectedSubject, selectedType } = this.state;
+    const { sClass, sSubject, sType } = this.state;
     return (
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Course</Text>
         <Content contentContainerStyle={styles.container}>
           <Dropdown
-            selectedValue={selectedClass}
+            sValue={sClass}
             list={this.courseService.getClasses()}
-            onValueChange={itemValue => this.onSelectionChange('selectedClass', itemValue)}
+            onValueChange={itemValue => this.onSelectionChange('sClass', itemValue)}
           />
           <Dropdown
-            selectedValue={selectedSubject}
-            list={this.courseService.getSubjects(selectedClass)}
-            onValueChange={itemValue => this.onSelectionChange('selectedSubject', itemValue)}
+            sValue={sSubject}
+            list={this.courseService.getSubjects(sClass)}
+            onValueChange={itemValue => this.onSelectionChange('sSubject', itemValue)}
           />
           <Dropdown
-            selectedValue={selectedType}
+            sValue={sType}
             list={this.courseService.getTypes()}
-            onValueChange={itemValue => this.onSelectionChange('selectedType', itemValue)}
+            onValueChange={itemValue => this.onSelectionChange('sType', itemValue)}
           />
           <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
             <Text>Next</Text>
