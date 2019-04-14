@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ImageBackground } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Container, Content } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -7,6 +7,8 @@ import LectureService, { FilesBaseUrl } from '../../services/lecture';
 import { showErrorAlert } from '../../services/error';
 import { convertToTitleCase } from '../../services/common';
 import WebViewFlex from '../../components/WebViewFlex';
+
+import logo from '../../images/logo.png';
 
 interface IState {
   filePath: string;
@@ -68,8 +70,14 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
           isVideoAvailable={true}
           videoIconPress={this.videoIconPress}
         />
-        <Content contentContainerStyle={styles.container}>
-          <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
+        <Content contentContainerStyle={{ flex: 1 }}>
+          <ImageBackground
+            source={logo}
+            style={styles.container}
+            imageStyle={styles.imageBackgroundImage}
+          >
+            <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
+          </ImageBackground>
         </Content>
       </Container>
     );
@@ -86,6 +94,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     marginTop: 50,
+  },
+  imageBackgroundImage: {
+    opacity: 0.5,
+    resizeMode: 'center',
   },
   webView: {
     flex: 8,
