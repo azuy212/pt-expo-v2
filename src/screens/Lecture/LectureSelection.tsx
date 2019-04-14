@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ImageBackground } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Button, Container, Content, Text } from 'native-base';
 
@@ -7,6 +7,8 @@ import Dropdown from '../../components/Dropdown';
 import LectureService from '../../services/lecture';
 import HeaderComponent from '../../components/HeaderComponent';
 import { showErrorAlert } from '../../services/error';
+
+import logo from '../../images/logo.png';
 
 /******************************** Screen Title /********************************/
 const SCREEN_TITLE = 'Lecture';
@@ -36,10 +38,7 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
     if (params && params.sClass && params.sSubject) {
       this.lectureService = new LectureService(params.sClass, params.sSubject);
     } else {
-      showErrorAlert(
-        'Class or Subject not found',
-        'No Class or Subject is s, Please s them first',
-      );
+      showErrorAlert('Class or Subject not found', 'No Class or Subject is s, Please s them first');
       this.props.navigation.navigate('Home');
     }
   }
@@ -76,25 +75,31 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Lecture</Text>
-        <Content contentContainerStyle={styles.container}>
-          <Dropdown
-            sValue={sTitle}
-            list={this.lectureService.getTitles()}
-            onValueChange={itemValue => this.onSelectionChange('sTitle', itemValue)}
-          />
-          <Dropdown
-            sValue={sSection}
-            list={this.lectureService.getSections(sTitle)}
-            onValueChange={itemValue => this.onSelectionChange('sSection', itemValue)}
-          />
-          <Dropdown
-            sValue={sSubsection}
-            list={this.lectureService.getSubsections(sTitle, sSection)}
-            onValueChange={itemValue => this.onSelectionChange('sSubsection', itemValue)}
-          />
-          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
-            <Text>Next</Text>
-          </Button>
+        <Content contentContainerStyle={{ flex: 1 }}>
+          <ImageBackground
+            source={logo}
+            style={styles.container}
+            imageStyle={styles.imageBackgroundImage}
+          >
+            <Dropdown
+              sValue={sTitle}
+              list={this.lectureService.getTitles()}
+              onValueChange={itemValue => this.onSelectionChange('sTitle', itemValue)}
+            />
+            <Dropdown
+              sValue={sSection}
+              list={this.lectureService.getSections(sTitle)}
+              onValueChange={itemValue => this.onSelectionChange('sSection', itemValue)}
+            />
+            <Dropdown
+              sValue={sSubsection}
+              list={this.lectureService.getSubsections(sTitle, sSection)}
+              onValueChange={itemValue => this.onSelectionChange('sSubsection', itemValue)}
+            />
+            <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
+              <Text>Next</Text>
+            </Button>
+          </ImageBackground>
         </Content>
       </Container>
     );
@@ -106,6 +111,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  imageBackgroundImage: {
+    opacity: 0.5,
+    resizeMode: 'center',
   },
   textStyle: {
     fontSize: 30,

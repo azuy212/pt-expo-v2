@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ImageBackground } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Button, Container, Content, Text } from 'native-base';
 
@@ -7,6 +7,8 @@ import Dropdown from '../../components/Dropdown';
 import CourseService from '../../services/course';
 import HeaderComponent from '../../components/HeaderComponent';
 import { showErrorAlert } from '../../services/error';
+
+import logo from '../../images/logo.png';
 
 /******************************** Screen Title /********************************/
 const SCREEN_TITLE = 'Course';
@@ -67,25 +69,31 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Course</Text>
-        <Content contentContainerStyle={styles.container}>
-          <Dropdown
-            sValue={sClass}
-            list={this.courseService.getClasses()}
-            onValueChange={itemValue => this.onSelectionChange('sClass', itemValue)}
-          />
-          <Dropdown
-            sValue={sSubject}
-            list={this.courseService.getSubjects(sClass)}
-            onValueChange={itemValue => this.onSelectionChange('sSubject', itemValue)}
-          />
-          <Dropdown
-            sValue={sType}
-            list={this.courseService.getTypes()}
-            onValueChange={itemValue => this.onSelectionChange('sType', itemValue)}
-          />
-          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
-            <Text>Next</Text>
-          </Button>
+        <Content contentContainerStyle={{ flex: 1 }}>
+          <ImageBackground
+            source={logo}
+            style={styles.container}
+            imageStyle={styles.imageBackgroundImage}
+          >
+            <Dropdown
+              sValue={sClass}
+              list={this.courseService.getClasses()}
+              onValueChange={itemValue => this.onSelectionChange('sClass', itemValue)}
+            />
+            <Dropdown
+              sValue={sSubject}
+              list={this.courseService.getSubjects(sClass)}
+              onValueChange={itemValue => this.onSelectionChange('sSubject', itemValue)}
+            />
+            <Dropdown
+              sValue={sType}
+              list={this.courseService.getTypes()}
+              onValueChange={itemValue => this.onSelectionChange('sType', itemValue)}
+            />
+            <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
+              <Text>Next</Text>
+            </Button>
+          </ImageBackground>
         </Content>
       </Container>
     );
@@ -97,6 +105,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  imageBackgroundImage: {
+    opacity: 0.5,
+    resizeMode: 'center',
   },
   textStyle: {
     fontSize: 30,
