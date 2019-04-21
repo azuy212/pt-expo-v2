@@ -59,7 +59,7 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
     if (sType === 'lectures') {
       this.props.navigation.navigate('LectureSelection', { sClass, sSubject });
     } else {
-      showErrorAlert('Not Implemented', 'Questions are not yet implemented');
+      this.props.navigation.navigate('QuestionSelection', { sClass, sSubject });
     }
   }
 

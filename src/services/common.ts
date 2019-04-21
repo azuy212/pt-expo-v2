@@ -15,8 +15,8 @@ export function getClassSubjectKey(mClass: string, mSubject: string) {
 
 }
 
-export function getDistinctValues(data: ISubsection[], key: string) {
-  return data.reduce((acc: string[], curr) => {
+export function getDistinctValues<T>(data: T[], key: string) {
+  return data.reduce((acc: string[], curr: any) => {
     if (!acc.includes(curr[key])) {
       acc.push(curr[key]);
     }
@@ -24,8 +24,13 @@ export function getDistinctValues(data: ISubsection[], key: string) {
   },                 []);
 }
 
-export function generateDropDownOptions(list: string[]): IDropDownOptions {
-  return list.map(i => ({ label: i, value: i.toLowerCase() }));
+export function generateDropDownOptions(list: any[]): IDropDownOptions {
+  return list.map(i => {
+    if (typeof i === 'string') {
+      return { label: i, value: i.toLowerCase() };
+    }
+    return { label: i.toString(), value: i.toString() };
+  });
 }
 
 export function convertToTitleCase(text: string) {

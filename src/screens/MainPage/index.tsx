@@ -11,6 +11,8 @@ import CourseSelection from '../Course/CourseSelection';
 import SideBar from '../../components/SideBar';
 import LectureDetail from '../Lecture/LectureDetail';
 import LectureVideo from '../Lecture/LectureVideo';
+import QuestionSelection from '../Question/QuestionSelection';
+import QuestionDetail from '../Question/QuestionDetail';
 
 const ScreenNavigators = createStackNavigator(
   {
@@ -22,6 +24,8 @@ const ScreenNavigators = createStackNavigator(
     LectureSelection: { screen: LectureSelection },
     LectureDetail: { screen: LectureDetail },
     LectureVideo: { screen: LectureVideo },
+    QuestionSelection: { screen: QuestionSelection },
+    QuestionDetail: { screen: QuestionDetail },
   },
   {
     headerMode: 'none',
