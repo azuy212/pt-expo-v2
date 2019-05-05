@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, ImageBackground } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Button, Container, Content, Text } from 'native-base';
 
@@ -9,6 +9,7 @@ import HeaderComponent from '../../components/HeaderComponent';
 import { showErrorAlert } from '../../services/error';
 
 import logo from '../../images/logo.png';
+import { SCREEN_IMAGE_LOGO } from '../../theme/image';
 
 /******************************** Screen Title /********************************/
 const SCREEN_TITLE = 'Lecture';
@@ -38,7 +39,10 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
     if (params && params.sClass && params.sSubject) {
       this.lectureService = new LectureService(params.sClass, params.sSubject);
     } else {
-      showErrorAlert('Class or Subject not found', 'No Class or Subject is s, Please s them first');
+      showErrorAlert(
+        'Class or Subject not found',
+        'No Class or Subject is selected, Please select them first',
+      );
       this.props.navigation.navigate('Home');
     }
   }
@@ -76,30 +80,25 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Lecture</Text>
         <Content contentContainerStyle={{ flex: 1 }}>
-          <ImageBackground
-            source={logo}
-            style={styles.container}
-            imageStyle={styles.imageBackgroundImage}
-          >
-            <Dropdown
-              sValue={sTitle}
-              list={this.lectureService.getTitles()}
-              onValueChange={itemValue => this.onSelectionChange('sTitle', itemValue)}
-            />
-            <Dropdown
-              sValue={sSection}
-              list={this.lectureService.getSections(sTitle)}
-              onValueChange={itemValue => this.onSelectionChange('sSection', itemValue)}
-            />
-            <Dropdown
-              sValue={sSubsection}
-              list={this.lectureService.getSubsections(sTitle, sSection)}
-              onValueChange={itemValue => this.onSelectionChange('sSubsection', itemValue)}
-            />
-            <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
-              <Text>Next</Text>
-            </Button>
-          </ImageBackground>
+          <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+          <Dropdown
+            sValue={sTitle}
+            list={this.lectureService.getTitles()}
+            onValueChange={itemValue => this.onSelectionChange('sTitle', itemValue)}
+          />
+          <Dropdown
+            sValue={sSection}
+            list={this.lectureService.getSections(sTitle)}
+            onValueChange={itemValue => this.onSelectionChange('sSection', itemValue)}
+          />
+          <Dropdown
+            sValue={sSubsection}
+            list={this.lectureService.getSubsections(sTitle, sSection)}
+            onValueChange={itemValue => this.onSelectionChange('sSubsection', itemValue)}
+          />
+          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
+            <Text>Next</Text>
+          </Button>
         </Content>
       </Container>
     );
@@ -112,14 +111,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  imageBackgroundImage: {
-    opacity: 0.5,
-    resizeMode: 'center',
-  },
   textStyle: {
     fontSize: 30,
     fontWeight: 'bold',
     alignSelf: 'center',
-    marginTop: 50,
+    marginTop: 10,
   },
 });

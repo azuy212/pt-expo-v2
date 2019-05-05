@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, ImageBackground } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Container, Content } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -71,13 +71,7 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
           videoIconPress={this.videoIconPress}
         />
         <Content contentContainerStyle={{ flex: 1 }}>
-          <ImageBackground
-            source={logo}
-            style={styles.container}
-            imageStyle={styles.imageBackgroundImage}
-          >
-            <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
-          </ImageBackground>
+          <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
         </Content>
       </Container>
     );
@@ -93,11 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     alignSelf: 'center',
-    marginTop: 50,
-  },
-  imageBackgroundImage: {
-    opacity: 0.5,
-    resizeMode: 'center',
+    marginTop: 10,
   },
   webView: {
     flex: 8,
