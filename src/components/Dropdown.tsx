@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Picker, StyleSheet } from 'react-native';
+import { Picker, StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('screen');
 
 interface IProps {
   onValueChange: (itemValue: any, itemPosition: number) => void;
@@ -29,7 +31,10 @@ export default class Dropdown extends Component<IProps> {
 const styles = StyleSheet.create({
   dropdown: {
     alignSelf: 'stretch',
-    height: 50,
-    margin: 10,
+    height: height / 14.5,
+    marginTop: height / 73.15,
+    marginBottom: height / 73.15,
+    marginLeft: width / 41.15,
+    marginRight: width / 41.15,
   },
 });

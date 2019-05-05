@@ -1,6 +1,5 @@
 import { getDistinctValues, generateDropDownOptions } from './common';
 import { IQuestion } from '../models/question';
-import { IDropDownOptions } from '../models/dropdown';
 
 const questionData: IQuestion[] = require('../../assets/trans_question.json');
 

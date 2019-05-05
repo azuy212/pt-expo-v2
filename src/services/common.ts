@@ -16,7 +16,7 @@ export function getClassSubjectKey(mClass: string, mSubject: string) {
 }
 
 export function getDistinctValues<T>(data: T[], key: string) {
-  return data.reduce((acc: string[], curr: any) => {
+  return data.reduce((acc: string[] | number[], curr: any) => {
     if (!acc.includes(curr[key])) {
       acc.push(curr[key]);
     }
@@ -25,7 +25,7 @@ export function getDistinctValues<T>(data: T[], key: string) {
 }
 
 export function generateDropDownOptions(list: any[]): IDropDownOptions {
-  return list.map(i => {
+  return list.map((i: any) => {
     if (typeof i === 'string') {
       return { label: i, value: i.toLowerCase() };
     }

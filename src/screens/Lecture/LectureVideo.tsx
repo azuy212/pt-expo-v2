@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     alignSelf: 'center',
-    marginTop: 50,
+    marginTop: 10,
   },
   webView: {
     flex: 1,

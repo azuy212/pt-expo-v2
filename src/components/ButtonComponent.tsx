@@ -11,16 +11,16 @@ import {
 } from 'react-native';
 
 interface Props {
-  loading: boolean;
+  loading?: boolean;
   onPress: (event: GestureResponderEvent) => void;
   buttonStyle?: StyleProp<ViewStyle>;
-  buttonTextStyle: StyleProp<TextStyle>;
+  buttonTextStyle?: StyleProp<TextStyle>;
   text: string;
 }
 
 export default (props: Props) => (
   <TouchableOpacity
-    style={props.buttonStyle || styles.button}
+    style={[styles.button, props.buttonStyle]}
     onPressIn={props.onPress}
   >
     {props.loading ? (

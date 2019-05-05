@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, ImageBackground } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Container, Content } from 'native-base';
-import HeaderComponent from '../../components/HeaderComponent';
-import QuestionService, { FilesBaseUrl } from '../../services/question';
-import { showErrorAlert } from '../../services/error';
-import { convertToTitleCase } from '../../services/common';
-import WebViewFlex from '../../components/WebViewFlex';
 
-import logo from '../../images/logo.png';
+import HeaderComponent from '../../../components/HeaderComponent';
+import QuestionService, { FilesBaseUrl } from '../../../services/question';
+import { showErrorAlert } from '../../../services/error';
+import { convertToTitleCase } from '../../../services/common';
+import WebViewFlex from '../../../components/WebViewFlex';
 
 interface IState {
   filePath: string;
@@ -39,7 +38,7 @@ export default class QuestionDetail extends Component<NavigationScreenProps, ISt
     }
   }
   componentDidMount() {
-    const params = this.props.navigation.state.params;
+    const { params } = this.props.navigation.state;
     if (params) {
       const { sChapter, sQuestion } = params;
       const questionDetails = this.questionService.getQuestionDetail(sChapter, sQuestion);
@@ -54,24 +53,13 @@ export default class QuestionDetail extends Component<NavigationScreenProps, ISt
       }
     }
   }
-  videoIconPress = () => {
-    this.props.navigation.navigate('QuestionVideo', {
-      videoUrl: `${FilesBaseUrl}/${this.state.videoPath}`,
-      sChapter: this.state.sChapter,
-    });
-  }
+
   render() {
     return (
       <Container>
         <HeaderComponent {...this.props} title={this.state.sChapter} />
         <Content contentContainerStyle={{ flex: 1 }}>
-          <ImageBackground
-            source={logo}
-            style={styles.container}
-            imageStyle={styles.imageBackgroundImage}
-          >
-            <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
-          </ImageBackground>
+          <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
         </Content>
       </Container>
     );
@@ -87,11 +75,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     alignSelf: 'center',
-    marginTop: 50,
-  },
-  imageBackgroundImage: {
-    opacity: 0.5,
-    resizeMode: 'center',
+    marginTop: 10,
   },
   webView: {
     flex: 8,

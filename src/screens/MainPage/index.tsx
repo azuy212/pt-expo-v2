@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
-import { Font, AppLoading } from 'expo';
-import { createDrawerNavigator, NavigationScreenProps, createStackNavigator } from 'react-navigation';
+import React from 'react';
+import { createDrawerNavigator, createStackNavigator } from 'react-navigation';
 
-import HomeScreen from './HomeScreen';
 import ChatScreen from '../Common/ChatScreen';
 import ProfileScreen from '../Common/ProfileScreen';
 import SettingsScreen from '../Common/SettingsScreen';
@@ -11,8 +9,11 @@ import CourseSelection from '../Course/CourseSelection';
 import SideBar from '../../components/SideBar';
 import LectureDetail from '../Lecture/LectureDetail';
 import LectureVideo from '../Lecture/LectureVideo';
-import QuestionSelection from '../Question/QuestionSelection';
-import QuestionDetail from '../Question/QuestionDetail';
+import QuestionQuizzesSelection from '../QuestionQuizzes/QuestionQuizzesSelection';
+import QuestionDetail from '../QuestionQuizzes/Question/QuestionDetail';
+import QuestionSelection from '../QuestionQuizzes/Question/QuestionSelection';
+import QuizDetail from '../QuestionQuizzes/Quizzes/QuizDetail';
+import QuizComplete from '../QuestionQuizzes/Quizzes/QuizComplete';
 
 const ScreenNavigators = createStackNavigator(
   {
@@ -24,8 +25,11 @@ const ScreenNavigators = createStackNavigator(
     LectureSelection: { screen: LectureSelection },
     LectureDetail: { screen: LectureDetail },
     LectureVideo: { screen: LectureVideo },
+    QuestionQuizzesSelection: { screen: QuestionQuizzesSelection },
     QuestionSelection: { screen: QuestionSelection },
     QuestionDetail: { screen: QuestionDetail },
+    QuizDetail: { screen: QuizDetail },
+    QuizComplete: { screen: QuizComplete },
   },
   {
     headerMode: 'none',

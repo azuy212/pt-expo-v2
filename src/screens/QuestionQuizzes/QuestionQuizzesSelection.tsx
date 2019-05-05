@@ -4,38 +4,45 @@ import { NavigationScreenProps } from 'react-navigation';
 import { Button, Container, Content, Text } from 'native-base';
 
 import Dropdown from '../../components/Dropdown';
-import CourseService from '../../services/course';
+import QuestionService from '../../services/question';
 import HeaderComponent from '../../components/HeaderComponent';
 import { showErrorAlert } from '../../services/error';
 
 import logo from '../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../theme/image';
 
-/******************************** Screen Title /********************************/
-const SCREEN_TITLE = 'Course';
+/******************************** Screen Header /********************************/
+const SCREEN_TITLE = 'Question and Quizzes';
 /******************************************************************************/
 
 interface IState {
-  sClass: string;
-  sSubject: string;
+  sChapter: string;
   sType: string;
 }
 
 type StateKeys = keyof IState;
 
-export default class CourseSelection extends Component<NavigationScreenProps, IState> {
+export default class QuestionQuizzesSelection extends Component<NavigationScreenProps, IState> {
   state = {
-    sClass: '',
-    sSubject: '',
+    sChapter: '',
     sType: '',
   };
 
-  private courseService: CourseService;
+  private questionService!: QuestionService;
 
   constructor(props: NavigationScreenProps) {
     super(props);
+    const { params } = props.navigation.state;
 
-    this.courseService = new CourseService();
+    if (params && params.sClass && params.sSubject) {
+      this.questionService = new QuestionService(params.sClass, params.sSubject);
+    } else {
+      showErrorAlert(
+        'Class or Subject not found',
+        'No Class or Subject is selected, Please select them first',
+      );
+      this.props.navigation.navigate('Home');
+    }
   }
 
   onSelectionChange(key: StateKeys, value: string) {
@@ -45,49 +52,43 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
   }
 
   nextButtonPressed = () => {
-    const { sClass, sSubject, sType } = this.state;
+    const { sClass, sSubject } = this.props.navigation.state.params!;
+    const { sChapter, sType } = this.state;
 
-    if (sClass === '') {
-      return showErrorAlert('Select all fields', 'Please select Class');
-    }
-    if (sSubject === '') {
-      return showErrorAlert('Select all fields', 'Please select Subject');
+    if (sChapter === '') {
+      return showErrorAlert('Select all fields', 'Please select Chapter');
     }
     if (sType === '') {
-      return showErrorAlert('Select all fields', 'Please select Lecture/Questions');
+      return showErrorAlert('Select all fields', 'Please select Question/Quizzes');
     }
 
-    if (sType === 'lectures') {
-      this.props.navigation.navigate('LectureSelection', { sClass, sSubject });
-    } else {
-      this.props.navigation.navigate('QuestionQuizzesSelection', { sClass, sSubject });
-    }
+    const target = sType === 'questions' ? 'QuestionSelection' : 'QuizDetail';
+    this.props.navigation.navigate(target, {
+      sClass,
+      sSubject,
+      sChapter,
+    });
   }
 
   render() {
-    const { sClass, sSubject, sType } = this.state;
+    const { sChapter, sType } = this.state;
     return (
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
-        <Text style={styles.textStyle}>Select Course</Text>
+        <Text style={styles.textStyle}>Select Question</Text>
         <Content contentContainerStyle={{ flex: 1 }}>
           <Image style={SCREEN_IMAGE_LOGO} source={logo} />
           <Dropdown
-            sValue={sClass}
-            list={this.courseService.getClasses()}
-            onValueChange={itemValue => this.onSelectionChange('sClass', itemValue)}
-          />
-          <Dropdown
-            sValue={sSubject}
-            list={this.courseService.getSubjects(sClass)}
-            onValueChange={itemValue => this.onSelectionChange('sSubject', itemValue)}
+            sValue={sChapter}
+            list={this.questionService.getChapters()}
+            onValueChange={itemValue => this.onSelectionChange('sChapter', itemValue)}
           />
           <Dropdown
             sValue={sType}
-            list={this.courseService.getTypes()}
+            list={this.questionService.getTypes()}
             onValueChange={itemValue => this.onSelectionChange('sType', itemValue)}
           />
-          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginEnd: 20 }}>
+          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
             <Text>Next</Text>
           </Button>
         </Content>
