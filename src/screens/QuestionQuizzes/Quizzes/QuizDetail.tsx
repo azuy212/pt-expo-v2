@@ -18,6 +18,7 @@ import QuizAnswerButtons from '../../../components/QuizAnswerButtons';
 
 import logo from '../../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../../theme/image';
+import QuizHeader from '../../../components/QuizHeader';
 
 interface IState {
   quizzes: IQuiz[];
@@ -25,6 +26,7 @@ interface IState {
   totalQuizzes: number;
   currentQuizNumber: number;
   correctAnswers: number;
+  skipped: number;
   error?: boolean;
 }
 
@@ -35,6 +37,7 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
     totalQuizzes: 0,
     currentQuizNumber: -1,
     correctAnswers: 0,
+    skipped: 0,
     error: false,
   } as IState;
 
@@ -90,15 +93,34 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
     }
   }
 
+  loadPreviousQuestion = () => {
+    const { currentQuizNumber, quizzes } = this.state;
+    if (quizzes.length > 0) {
+      const nextQuiz = quizzes[currentQuizNumber - 1];
+      const quizDetail = this.quizService.getQuizDetail(nextQuiz.id_quizzes.toString());
+      if (quizDetail) {
+        const filePath = this.quizService.createFilePath(
+          quizDetail.course,
+          quizDetail.file_name,
+          quizDetail.quiz_link,
+        );
+        this.setState({
+          filePath,
+          currentQuizNumber: currentQuizNumber - 1,
+        });
+      }
+    }
+  }
+
   buttonListener = (answer: string) => {
     const { currentQuizNumber, totalQuizzes, quizzes, correctAnswers } = this.state;
     const currentQuiz = quizzes[currentQuizNumber];
     if (answer === currentQuiz.answer) {
       this.setState({ correctAnswers: correctAnswers + 1 });
-      Toast.show({ text: 'Correct Answer!', type: 'success' });
+      Toast.show({ text: 'Correct Answer!', duration: 700, type: 'success' });
     } else {
       console.log('ans:', currentQuiz.answer, currentQuiz.det_answer);
-      Toast.show({ text: 'Wrong Answer!', type: 'danger' });
+      Toast.show({ text: 'Wrong Answer!', duration: 700, type: 'danger' });
     }
     if (currentQuizNumber + 1 !== totalQuizzes) {
       this.loadNextQuestion();
@@ -118,6 +140,33 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
     this.setState({ error });
   }
 
+  handleBackPress = () => {
+    if (this.state.currentQuizNumber > 0) {
+      this.loadPreviousQuestion();
+    }
+  }
+
+  handleSkipPress = () => {
+    const { currentQuizNumber, totalQuizzes, correctAnswers, skipped } = this.state;
+    if (currentQuizNumber + 1 !== totalQuizzes) {
+      Toast.show({
+        text: 'Question Skipped!',
+        type: 'warning',
+        duration: 500,
+        onClose: () => {
+          this.loadNextQuestion();
+          this.setState({ skipped: skipped + 1 });
+        },
+      });
+    } else {
+      this.props.navigation.navigate('QuizComplete', {
+        skipped,
+        correctAnswers,
+        totalQuizzes,
+      });
+    }
+  }
+
   render() {
     const { currentQuizNumber, totalQuizzes, filePath, error } = this.state;
     return (
@@ -126,6 +175,12 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
           <HeaderComponent
             {...this.props}
             title={`Quiz ${currentQuizNumber + 1} of ${totalQuizzes}`}
+          />
+          <QuizHeader
+            style={{ flex: 0.1 }}
+            error={error}
+            onBackPress={this.handleBackPress}
+            onForwardPress={this.handleSkipPress}
           />
           <Content contentContainerStyle={styles.container}>
             {error ? (
@@ -150,11 +205,13 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
 
 const styles = StyleSheet.create({
   container: {
-    flex: 13,
+    flex: 12,
+  },
+  quizHeader: {
+    flex: 1,
   },
   webView: {
-    flex: 5,
-    paddingTop: 10,
+    flex: 6,
   },
   error: {
     flex: 5,
