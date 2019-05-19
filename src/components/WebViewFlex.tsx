@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 interface IProps {
-  style: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
   url: string;
   onLoadStart?: (event: NavState) => void;
   onLoadEnd?: (event: NavState) => void;
@@ -26,7 +26,7 @@ const captureData = `setTimeout(() => {
 `;
 
 const WebViewFlex = (props: IProps) => (
-  <View style={props.style}>
+  <View style={[{ flex: 1 }, props.style]}>
     <WebView
       style={{ flex: 1 }}
       source={{ uri: props.url }}
