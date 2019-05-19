@@ -4,15 +4,20 @@ import {
   ToastAndroid,
   NativeSyntheticEvent,
   WebViewMessageEventData,
+  Image,
 } from 'react-native';
+import { Container, Content, Root, Toast, Text, View, H1 } from 'native-base';
 import { NavigationScreenProps } from 'react-navigation';
+
 import QuizService, { FilesBaseUrl } from '../../../services/quiz';
 import { showErrorAlert } from '../../../services/error';
 import { IQuiz } from '../../../models/quiz';
-import { Container, Content, Root, Toast, Text, View, H1 } from 'native-base';
 import HeaderComponent from '../../../components/HeaderComponent';
 import WebViewFlex from '../../../components/WebViewFlex';
 import QuizAnswerButtons from '../../../components/QuizAnswerButtons';
+
+import logo from '../../../images/logo.png';
+import { SCREEN_IMAGE_LOGO } from '../../../theme/image';
 
 interface IState {
   quizzes: IQuiz[];
@@ -122,7 +127,7 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
             {...this.props}
             title={`Quiz ${currentQuizNumber + 1} of ${totalQuizzes}`}
           />
-          <Content contentContainerStyle={{ flex: 1 }}>
+          <Content contentContainerStyle={styles.container}>
             {error ? (
               <View style={styles.error}>
                 <H1>No Data Found!</H1>
@@ -134,6 +139,7 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
                 onMessage={this.handleError}
               />
             )}
+            <Image style={[SCREEN_IMAGE_LOGO, { flex: 3 }]} source={logo} />
             <QuizAnswerButtons style={styles.buttons} buttonListener={this.buttonListener} />
           </Content>
         </Container>
@@ -143,9 +149,12 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 13,
+  },
   webView: {
     flex: 5,
-    padding: 15,
+    paddingTop: 10,
   },
   error: {
     flex: 5,
@@ -153,6 +162,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttons: {
-    flex: 4,
+    flex: 5,
   },
 });

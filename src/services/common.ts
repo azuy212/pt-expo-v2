@@ -1,4 +1,3 @@
-import { ISubsection } from '../models/subsection';
 import { IDropDownOptions } from '../models/dropdown';
 
 export function getClassSubjectKey(mClass: string, mSubject: string) {
@@ -37,4 +36,8 @@ export function convertToTitleCase(text: string) {
   return text.replace(/(\w)(\w*)/g, (_, i, r) => {
     return i.toUpperCase() + (r != null ? r : '');
   });
+}
+
+export function calculatePercentage(current: number, total: number) {
+  return Math.round((current / total) * 10000) / 100;
 }
