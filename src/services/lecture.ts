@@ -6,7 +6,7 @@ const subSectionData: ISubsection[] = require('../../assets/trans_subsection.jso
 export const FilesBaseUrl = 'https://s3.amazonaws.com/pocket-tutor-assets/subsection';
 
 export default class LectureService {
-  constructor(private sClass: string, private sSubject: string) {}
+  constructor(private sClass?: string, private sSubject?: string) {}
 
   getTitles() {
     const titles = generateDropDownOptions(
@@ -64,6 +64,13 @@ export default class LectureService {
         data.ch_tittle.toLowerCase() === sTitle &&
         data.section.toLowerCase() === sSection &&
         data.subsection.toLowerCase() === sSubsection,
+    );
+  }
+
+  getSearchResult(search: string) {
+    return subSectionData.filter(
+      data =>
+        data.keyword.includes(search),
     );
   }
 

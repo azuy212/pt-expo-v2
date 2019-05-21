@@ -4,6 +4,7 @@ import { NavigationScreenProps } from 'react-navigation';
 import { StatusBar, StyleSheet } from 'react-native';
 
 import { headerHeight } from '../theme/header';
+import SearchModal from './SearchModal';
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 
@@ -34,21 +35,7 @@ export default class HeaderComponent extends Component<AllProps, IState> {
   }
 
   render() {
-    return this.state.enableSearch ? (
-      <Header
-        style={{ height: headerHeight + statusBarHeight, paddingTop: statusBarHeight }}
-        searchBar={true}
-        rounded={true}>
-        <Item>
-          <Icon name='ios-search' />
-          <Input placeholder='Search' />
-          <Icon name='md-close-circle' onPress={this.disableSearch} />
-        </Item>
-        <Button transparent={true}>
-          <Text>Search</Text>
-        </Button>
-      </Header>
-    ) : (
+    return (
       <Header style={{ height: headerHeight + statusBarHeight }}>
         <Left style={styles.header}>
           <Button transparent={true} onPress={() => this.props.navigation.openDrawer()}>
@@ -66,6 +53,7 @@ export default class HeaderComponent extends Component<AllProps, IState> {
             onPress={this.props.isVideoAvailable ? this.props.videoIconPress : this.enableSearch}
           />
         </Right>
+        <SearchModal visible={this.state.enableSearch} hideModal={this.disableSearch} {...this.props} />
       </Header>
     );
   }
