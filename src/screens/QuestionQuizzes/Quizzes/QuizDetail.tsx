@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   StyleSheet,
   ToastAndroid,
@@ -6,7 +6,7 @@ import {
   WebViewMessageEventData,
   Image,
 } from 'react-native';
-import { Container, Content, Root, Toast, Text, View, H1 } from 'native-base';
+import { Container, Content, Root, Toast, View, H1 } from 'native-base';
 import { NavigationScreenProps } from 'react-navigation';
 
 import QuizService, { FilesBaseUrl } from '../../../services/quiz';
@@ -27,10 +27,11 @@ interface IState {
   currentQuizNumber: number;
   correctAnswers: number;
   skipped: number;
-  error?: boolean;
+  error: boolean | null;
+  loading: boolean | null;
 }
 
-export default class QuizDetail extends Component<NavigationScreenProps, IState> {
+export default class QuizDetail extends PureComponent<NavigationScreenProps, IState> {
   state = {
     quizzes: [],
     filePath: '',
@@ -38,7 +39,8 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
     currentQuizNumber: -1,
     correctAnswers: 0,
     skipped: 0,
-    error: false,
+    error: null,
+    loading: null,
   } as IState;
 
   private quizService!: QuizService;
@@ -137,7 +139,16 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
     const message = event.nativeEvent.data;
     const regex = /<Code>AccessDenied<\/Code>/;
     const error = regex.test(message);
-    this.setState({ error });
+    if (error !== this.state.error) {
+      this.setState({ error });
+    }
+  }
+
+  handleLoading = (isLoading: boolean) => {
+    const { loading } = this.state;
+    if (loading === null && isLoading !== loading) {
+      this.setState({ loading: isLoading });
+    }
   }
 
   handleBackPress = () => {
@@ -168,7 +179,7 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
   }
 
   render() {
-    const { currentQuizNumber, totalQuizzes, filePath, error } = this.state;
+    const { currentQuizNumber, totalQuizzes, filePath, error, loading } = this.state;
     return (
       <Root>
         <Container>
@@ -176,14 +187,15 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
             {...this.props}
             title={`Quiz ${currentQuizNumber + 1} of ${totalQuizzes}`}
           />
-          <QuizHeader
-            style={{ flex: 0.1 }}
-            error={error}
-            onBackPress={this.handleBackPress}
-            onForwardPress={this.handleSkipPress}
-          />
+          {error === false ? (
+            <QuizHeader
+              style={{ flex: 0.1 }}
+              onBackPress={this.handleBackPress}
+              onForwardPress={this.handleSkipPress}
+            />
+          ) : null}
           <Content contentContainerStyle={styles.container}>
-            {error ? (
+            {error === true ? (
               <View style={styles.error}>
                 <H1>No Data Found!</H1>
               </View>
@@ -194,8 +206,10 @@ export default class QuizDetail extends Component<NavigationScreenProps, IState>
                 onMessage={this.handleError}
               />
             )}
-            <Image style={[SCREEN_IMAGE_LOGO, { flex: 3 }]} source={logo} />
-            <QuizAnswerButtons style={styles.buttons} buttonListener={this.buttonListener} />
+            <Image style={[SCREEN_IMAGE_LOGO, { flex: 3, opacity: 0.2 }]} source={logo} />
+            {error === false ? (
+              <QuizAnswerButtons style={styles.buttons} buttonListener={this.buttonListener} />
+            ) : null}
           </Content>
         </Container>
       </Root>
@@ -211,7 +225,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   webView: {
-    flex: 6,
+    flex: 5,
   },
   error: {
     flex: 5,

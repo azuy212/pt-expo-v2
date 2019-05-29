@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, NativeSyntheticEvent, WebViewMessageEventData } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
-import { Container, Content } from 'native-base';
+import { Container, Content, View, H1 } from 'native-base';
 
 import HeaderComponent from '../../../components/HeaderComponent';
 import QuestionService, { FilesBaseUrl } from '../../../services/question';
@@ -13,6 +13,7 @@ interface IState {
   filePath: string;
   videoPath: string;
   sChapter: string;
+  error?: boolean;
 }
 
 export default class QuestionDetail extends Component<NavigationScreenProps, IState> {
@@ -20,6 +21,7 @@ export default class QuestionDetail extends Component<NavigationScreenProps, ISt
     filePath: '',
     videoPath: '',
     sChapter: 'Question Detail',
+    error: false,
   };
   private questionService!: QuestionService;
 
@@ -37,6 +39,7 @@ export default class QuestionDetail extends Component<NavigationScreenProps, ISt
       this.props.navigation.navigate('Home');
     }
   }
+
   componentDidMount() {
     const { params } = this.props.navigation.state;
     if (params) {
@@ -54,12 +57,30 @@ export default class QuestionDetail extends Component<NavigationScreenProps, ISt
     }
   }
 
+  handleError = (event: NativeSyntheticEvent<WebViewMessageEventData>) => {
+    const message = event.nativeEvent.data;
+    const regex = /<Code>AccessDenied<\/Code>/;
+    const error = regex.test(message);
+    this.setState({ error });
+  }
+
   render() {
+    const { error, filePath } = this.state;
     return (
       <Container>
         <HeaderComponent {...this.props} title={this.state.sChapter} />
         <Content contentContainerStyle={{ flex: 1 }}>
-          <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
+          {error ? (
+            <View style={styles.error}>
+              <H1>No Data Found!</H1>
+            </View>
+          ) : (
+            <WebViewFlex
+              style={styles.webView}
+              url={`${FilesBaseUrl}/${filePath}`}
+              onMessage={this.handleError}
+            />
+          )}
         </Content>
       </Container>
     );
@@ -79,5 +100,10 @@ const styles = StyleSheet.create({
   },
   webView: {
     flex: 8,
+  },
+  error: {
+    flex: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

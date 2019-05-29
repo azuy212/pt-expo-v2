@@ -12,7 +12,6 @@ interface IState {
 interface IProps {
   style?: StyleProp<ViewStyle>;
   stop?: boolean;
-  error?: boolean;
   onBackPress: Function;
   onForwardPress: Function;
 }
@@ -44,7 +43,7 @@ export default class QuizHeader extends Component<IProps, IState> {
   }
 
   render() {
-    return this.props.error ? null : (
+    return (
       <Header
         leftComponent={{
           icon: 'arrow-back',

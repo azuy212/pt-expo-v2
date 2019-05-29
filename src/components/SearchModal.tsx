@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  StatusBar,
   Modal,
   FlatList,
   TouchableWithoutFeedback,
@@ -22,7 +21,7 @@ const SearchResult = (props: AllSearchProps) => {
   return (
     <View>
       <FlatList
-        style={{ backgroundColor: '#ffffff' }}
+        style={styles.listStyle}
         data={result}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
@@ -37,10 +36,15 @@ const SearchResult = (props: AllSearchProps) => {
                 sSubsection: subsection,
               });
               props.hideModal();
-            }}>
+            }}
+          >
             <View style={styles.sectionItem}>
-              <Text style={styles.textStyle}>
-                {index + 1}. {item.subsection || item.section}
+              <Text style={{ fontWeight: 'bold' }}>
+                {index + 1}. {item.ch_tittle} ({item.course})
+              </Text>
+              <Text>{item.section}</Text>
+              <Text>
+                {item.subsection}
               </Text>
             </View>
           </TouchableWithoutFeedback>
@@ -75,9 +79,9 @@ export default class SearchModal extends Component<AllProps, IState> {
         <View style={{ flex: 1 }}>
           <Header style={{ height: headerHeight }} searchBar={true} rounded={true}>
             <Item>
-              <Icon name='ios-search' />
-              <Input placeholder='Search' onChangeText={text => this.setState({ search: text })} />
-              <Icon name='md-close-circle' onPress={this.props.hideModal} />
+              <Icon name='md-arrow-back' onPress={this.props.hideModal} />
+              <Input placeholder='Search' value={this.state.search} onChangeText={text => this.setState({ search: text })} />
+              <Icon name='md-close-circle' onPress={() => this.setState({ search: '' })} />
             </Item>
             <Button transparent={true}>
               <Text>Search</Text>
@@ -97,6 +101,9 @@ const styles = StyleSheet.create({
     borderTopColor: '#211f',
     borderTopWidth: 1,
     padding: 12,
+  },
+  listStyle: {
+    backgroundColor: '#FFFFFF',
   },
   textStyle: {
     fontSize: 15,
