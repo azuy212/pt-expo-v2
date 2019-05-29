@@ -6,7 +6,6 @@ import {
   StyleProp,
   NavState,
   ActivityIndicator,
-  Text,
   NativeSyntheticEvent,
   WebViewMessageEventData,
 } from 'react-native';

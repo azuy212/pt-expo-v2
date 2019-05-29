@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, NativeSyntheticEvent, WebViewMessageEventData } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
-import { Container, Content } from 'native-base';
+import { Container, Content, View, H1 } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
 import LectureService, { FilesBaseUrl } from '../../services/lecture';
 import { showErrorAlert } from '../../services/error';
@@ -14,6 +14,7 @@ interface IState {
   filePath: string;
   videoPath: string;
   sTitle: string;
+  error?: boolean;
 }
 
 export default class LectureDetail extends Component<NavigationScreenProps, IState> {
@@ -21,6 +22,7 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
     filePath: '',
     videoPath: '',
     sTitle: 'Lecture Detail',
+    error: false,
   };
   private lectureService!: LectureService;
 
@@ -38,6 +40,7 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
       this.props.navigation.navigate('Home');
     }
   }
+
   componentDidMount() {
     const params = this.props.navigation.state.params;
     if (params) {
@@ -55,13 +58,23 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
       }
     }
   }
+
+  handleError = (event: NativeSyntheticEvent<WebViewMessageEventData>) => {
+    const message = event.nativeEvent.data;
+    const regex = /<Code>AccessDenied<\/Code>/;
+    const error = regex.test(message);
+    this.setState({ error });
+  }
+
   videoIconPress = () => {
     this.props.navigation.navigate('LectureVideo', {
       videoUrl: `${FilesBaseUrl}/${this.state.videoPath}`,
       sTitle: this.state.sTitle,
     });
   }
+
   render() {
+    const { error, filePath } = this.state;
     return (
       <Container>
         <HeaderComponent
@@ -71,7 +84,17 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
           videoIconPress={this.videoIconPress}
         />
         <Content contentContainerStyle={{ flex: 1 }}>
-          <WebViewFlex style={styles.webView} url={`${FilesBaseUrl}/${this.state.filePath}`} />
+          {error ? (
+            <View style={styles.error}>
+              <H1>No Data Found!</H1>
+            </View>
+          ) : (
+            <WebViewFlex
+              style={styles.webView}
+              url={`${FilesBaseUrl}/${filePath}`}
+              onMessage={this.handleError}
+            />
+          )}
         </Content>
       </Container>
     );
@@ -91,5 +114,10 @@ const styles = StyleSheet.create({
   },
   webView: {
     flex: 8,
+  },
+  error: {
+    flex: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

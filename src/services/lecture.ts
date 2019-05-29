@@ -70,7 +70,10 @@ export default class LectureService {
   getSearchResult(search: string) {
     return subSectionData.filter(
       data =>
-        data.keyword.includes(search),
+        data.ch_tittle.toLowerCase().includes(search.toLowerCase()) ||
+        data.course.toLowerCase().includes(search.toLowerCase()) ||
+        data.section.toLowerCase().includes(search.toLowerCase()) ||
+        data.subsection.toLowerCase().includes(search.toLowerCase()),
     );
   }
 
