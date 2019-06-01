@@ -118,13 +118,7 @@ Parameters:
   userpoolClientSetAttributes:
     Type: String
           
-  useDefault:
-    Type: String
-            
   authSelections:
-    Type: String
-            
-  resourceName:
     Type: String
                                                   
 Conditions:
@@ -170,16 +164,6 @@ Resources:
     Properties:
       UserPoolName: !If [ShouldNotCreateEnvResources, !Ref userPoolName, !Join ['',[!Ref userPoolName, '-', !Ref env]]]
       Schema: 
-        
-        -
-          Name: name
-          Required: true
-          Mutable: true
-        
-        -
-          Name: phone_number
-          Required: true
-          Mutable: true
         
         -
           Name: email
@@ -338,7 +322,7 @@ Resources:
   # Always created
     Type: AWS::Cognito::IdentityPool
     Properties: 
-      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'cognitoPocketTutorV2_identitypool_83d89e76', !Join ['',['cognitoPocketTutorV2_identitypool_83d89e76', '__', !Ref env]]]
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'cognitoPocketTutorV2_identitypool_68967816', !Join ['',['cognitoPocketTutorV2_identitypool_68967816', '__', !Ref env]]]
       
       CognitoIdentityProviders:
         - ClientId:  !Ref UserPoolClient

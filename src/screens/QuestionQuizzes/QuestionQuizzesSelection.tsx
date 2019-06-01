@@ -10,20 +10,26 @@ import { showErrorAlert } from '../../services/error';
 
 import logo from '../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../theme/image';
+import { IDropDownOptions } from '../../models/dropdown';
+import Loading from '../../components/Loading';
 
 /******************************** Screen Header /********************************/
 const SCREEN_TITLE = 'Question and Quizzes';
 /******************************************************************************/
 
 interface IState {
+  loading: boolean;
+  chapters: IDropDownOptions;
   sChapter: string;
   sType: string;
 }
 
-type StateKeys = keyof IState;
+type StateKeys = 'sChapter' | 'sType';
 
 export default class QuestionQuizzesSelection extends Component<NavigationScreenProps, IState> {
   state = {
+    loading: true,
+    chapters: [{ label: 'Select Chapter', value: '' }],
     sChapter: '',
     sType: '',
   };
@@ -35,7 +41,10 @@ export default class QuestionQuizzesSelection extends Component<NavigationScreen
     const { params } = props.navigation.state;
 
     if (params && params.sClass && params.sSubject) {
-      this.questionService = new QuestionService(params.sClass, params.sSubject);
+      this.questionService = new QuestionService(
+        params.sClass,
+        params.sSubject,
+      );
     } else {
       showErrorAlert(
         'Class or Subject not found',
@@ -43,6 +52,14 @@ export default class QuestionQuizzesSelection extends Component<NavigationScreen
       );
       this.props.navigation.navigate('Home');
     }
+  }
+
+  async componentDidMount() {
+    await this.questionService.init();
+    this.setState({
+      loading: false,
+      chapters: this.questionService.getChapters(),
+    });
   }
 
   onSelectionChange(key: StateKeys, value: string) {
@@ -59,10 +76,13 @@ export default class QuestionQuizzesSelection extends Component<NavigationScreen
       return showErrorAlert('Select all fields', 'Please select Chapter');
     }
     if (sType === '') {
-      return showErrorAlert('Select all fields', 'Please select Question/Quizzes');
+      return showErrorAlert(
+        'Select all fields',
+        'Please select Question/Quizzes',
+      );
     }
 
-    const target = sType === 'questions' ? 'QuestionSelection' : 'QuizDetail';
+    const target = sType === 'Questions' ? 'QuestionSelection' : 'QuizDetail';
     this.props.navigation.navigate(target, {
       sClass,
       sSubject,
@@ -71,27 +91,37 @@ export default class QuestionQuizzesSelection extends Component<NavigationScreen
   }
 
   render() {
-    const { sChapter, sType } = this.state;
+    const { loading, chapters, sChapter, sType } = this.state;
     return (
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Question</Text>
-        <Content contentContainerStyle={{ flex: 1 }}>
-          <Image style={SCREEN_IMAGE_LOGO} source={logo} />
-          <Dropdown
-            sValue={sChapter}
-            list={this.questionService.getChapters()}
-            onValueChange={itemValue => this.onSelectionChange('sChapter', itemValue)}
-          />
-          <Dropdown
-            sValue={sType}
-            list={this.questionService.getTypes()}
-            onValueChange={itemValue => this.onSelectionChange('sType', itemValue)}
-          />
-          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
-            <Text>Next</Text>
-          </Button>
-        </Content>
+        {loading ? (
+          <Loading />
+        ) : (
+          <Content contentContainerStyle={{ flex: 1 }}>
+            <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+            <Dropdown
+              sValue={sChapter}
+              list={chapters}
+              onValueChange={itemValue =>
+                this.onSelectionChange('sChapter', itemValue)
+              }
+            />
+            <Dropdown
+              sValue={sType}
+              list={this.questionService.getTypes()}
+              onValueChange={itemValue =>
+                this.onSelectionChange('sType', itemValue)
+              }
+            />
+            <Button
+              onPress={this.nextButtonPressed}
+              style={{ alignSelf: 'center', marginTop: 10 }}>
+              <Text>Next</Text>
+            </Button>
+          </Content>
+        )}
       </Container>
     );
   }

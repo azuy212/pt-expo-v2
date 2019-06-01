@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Auth } from 'aws-amplify';
 import { Button } from 'react-native-elements';
 
@@ -8,6 +8,7 @@ import { showErrorAlert } from '../../services/error';
 import { NavigationScreenProps } from 'react-navigation';
 import HeaderComponent from '../../components/HeaderComponent';
 import { Container, Content } from 'native-base';
+import Loading from '../../components/Loading';
 
 /******************************** Screen Title /********************************/
 const SCREEN_TITLE = 'Profile';
@@ -75,7 +76,7 @@ export default class ProfileScreen extends React.Component<NavigationScreenProps
         </Content>
       </Container>
     ) : (
-      <ActivityIndicator style={[styles.container, { alignItems: 'center' }]} size='large' />
+      <Loading />
     );
   }
 }

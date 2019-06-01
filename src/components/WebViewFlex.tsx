@@ -5,10 +5,10 @@ import {
   ViewStyle,
   StyleProp,
   NavState,
-  ActivityIndicator,
   NativeSyntheticEvent,
   WebViewMessageEventData,
 } from 'react-native';
+import Loading from './Loading';
 
 interface IProps {
   style?: StyleProp<ViewStyle>;
@@ -35,13 +35,7 @@ const WebViewFlex = (props: IProps) => (
       injectedJavaScript={captureData}
       onMessage={props.onMessage}
       renderLoading={() => (
-        <ActivityIndicator
-          animating={true}
-          color='#84888d'
-          size='large'
-          hidesWhenStopped={true}
-          style={{ alignItems: 'center', justifyContent: 'center', padding: 30, flex: 1 }}
-        />
+        <Loading />
       )}
       startInLoadingState={true}
     />

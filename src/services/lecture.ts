@@ -1,21 +1,48 @@
 import { ISubsection } from '../models/subsection';
 import { getDistinctValues, generateDropDownOptions } from './common';
+import { dynamoDBClient, subsectionTableName } from '../config/aws-config';
+import { Alert } from 'react-native';
 
-const subSectionData: ISubsection[] = require('../../assets/trans_subsection.json');
-
-export const FilesBaseUrl = 'https://s3.amazonaws.com/pocket-tutor-assets/subsection';
+export const FilesBaseUrl =
+  'https://s3.amazonaws.com/pocket-tutor-assets/subsection';
 
 export default class LectureService {
+  private lectureData: ISubsection[] = [];
+
   constructor(private sClass?: string, private sSubject?: string) {}
+
+  async init() {
+    try {
+      const { Items } = await dynamoDBClient
+        .scan({
+          TableName: subsectionTableName,
+          ExpressionAttributeNames: {
+            '#class': 'class',
+            '#subject': 'subject',
+          },
+          ExpressionAttributeValues: {
+              ':sClass': this.sClass,
+              ':sSubject': this.sSubject,
+          },
+          FilterExpression: '#class = :sClass AND #subject = :sSubject',
+         })
+        .promise();
+      if (Items) {
+        this.lectureData = Items as ISubsection[];
+      }
+    } catch (error) {
+      console.log('Error', error);
+      Alert.alert(
+        'Error Fetching Data',
+        'Error while fetching data from remote server',
+      );
+    }
+  }
 
   getTitles() {
     const titles = generateDropDownOptions(
       getDistinctValues(
-        subSectionData.filter(
-          data =>
-            data.class.toLowerCase() === this.sClass &&
-            data.subject.toLowerCase() === this.sSubject,
-        ),
+        this.lectureData,
         'ch_tittle',
       ),
     );
@@ -26,11 +53,9 @@ export default class LectureService {
   getSections(sTitle: string) {
     const sections = generateDropDownOptions(
       getDistinctValues(
-        subSectionData.filter(
+        this.lectureData.filter(
           data =>
-            data.class.toLowerCase() === this.sClass &&
-            data.subject.toLowerCase() === this.sSubject &&
-            data.ch_tittle.toLowerCase() === sTitle,
+            data.ch_tittle === sTitle,
         ),
         'section',
       ),
@@ -42,12 +67,10 @@ export default class LectureService {
   getSubsections(sTitle: string, sSection: string) {
     const subsections = generateDropDownOptions(
       getDistinctValues(
-        subSectionData.filter(
+        this.lectureData.filter(
           data =>
-            data.class.toLowerCase() === this.sClass &&
-            data.subject.toLowerCase() === this.sSubject &&
-            data.ch_tittle.toLowerCase() === sTitle &&
-            data.section.toLowerCase() === sSection,
+            data.ch_tittle === sTitle &&
+            data.section === sSection,
         ),
         'subsection',
       ),
@@ -57,27 +80,21 @@ export default class LectureService {
   }
 
   getLectureDetail(sTitle: string, sSection: string, sSubsection: string) {
-    return subSectionData.find(
+    return this.lectureData.find(
       data =>
-        data.class.toLowerCase() === this.sClass &&
-        data.subject.toLowerCase() === this.sSubject &&
-        data.ch_tittle.toLowerCase() === sTitle &&
-        data.section.toLowerCase() === sSection &&
-        data.subsection.toLowerCase() === sSubsection,
+        data.ch_tittle === sTitle &&
+        data.section === sSection &&
+        data.subsection === sSubsection,
     );
   }
 
-  getSearchResult(search: string) {
-    return subSectionData.filter(
-      data =>
-        data.ch_tittle.toLowerCase().includes(search.toLowerCase()) ||
-        data.course.toLowerCase().includes(search.toLowerCase()) ||
-        data.section.toLowerCase().includes(search.toLowerCase()) ||
-        data.subsection.toLowerCase().includes(search.toLowerCase()),
-    );
-  }
-
-  createFilePath(sCourse: string, sFileId: string, sChapter: number, sFileName: string, sVideoName: string) {
+  createFilePath(
+    sCourse: string,
+    sFileId: string,
+    sChapter: number,
+    sFileName: string,
+    sVideoName: string,
+  ) {
     const path: string[] = [];
     path.push(sCourse);
     path.push(`${sCourse}C${sChapter}`);

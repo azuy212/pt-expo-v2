@@ -10,12 +10,16 @@ import { showErrorAlert } from '../../../services/error';
 
 import logo from '../../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../../theme/image';
+import { IDropDownOptions } from '../../../models/dropdown';
+import Loading from '../../../components/Loading';
 
 /******************************** Screen Header /********************************/
 const SCREEN_TITLE = 'Question';
 /******************************************************************************/
 
 interface IState {
+  loading: boolean;
+  questions: IDropDownOptions;
   sQuestion: string;
 }
 
@@ -23,6 +27,8 @@ type StateKeys = keyof IState;
 
 export default class QuestionSelection extends Component<NavigationScreenProps, IState> {
   state = {
+    loading: true,
+    questions: [{ label: 'Select Question', value: '' }],
     sQuestion: '',
   };
 
@@ -33,7 +39,10 @@ export default class QuestionSelection extends Component<NavigationScreenProps, 
     const { params } = props.navigation.state;
 
     if (params && params.sClass && params.sSubject && params.sChapter) {
-      this.questionService = new QuestionService(params.sClass, params.sSubject);
+      this.questionService = new QuestionService(
+        params.sClass,
+        params.sSubject,
+      );
     } else {
       showErrorAlert(
         'Class or Subject not found',
@@ -43,46 +52,76 @@ export default class QuestionSelection extends Component<NavigationScreenProps, 
     }
   }
 
-  onSelectionChange(key: StateKeys, value: string) {
+  async componentDidMount() {
+    await this.questionService.init();
+    const { sChapter } = this.props.navigation.state.params!;
     this.setState({
-      [key]: value,
-    } as Pick<IState, StateKeys>);
+      loading: false,
+      questions: this.questionService.getQuestions(sChapter),
+    });
+  }
+
+  generateQuestionDetailNavigationParams(sChapter: string, sQuestion: string) {
+    const questionDetails = this.questionService.getQuestionDetail(
+      sChapter,
+      sQuestion,
+    );
+    if (questionDetails) {
+      const { filePath, videoPath } = this.questionService.createFilePath(
+        questionDetails.course,
+        questionDetails.chapter,
+        questionDetails.lecture_link,
+        questionDetails.lecture_video,
+      );
+      return {
+        filePath,
+        videoPath,
+        sQuestion,
+        error: false,
+      };
+    }
+    return {
+      error: true,
+    };
   }
 
   nextButtonPressed = () => {
-    const { sClass, sSubject, sChapter } = this.props.navigation.state.params!;
+    const { sChapter } = this.props.navigation.state.params!;
     const { sQuestion } = this.state;
 
     if (sQuestion === '') {
       return showErrorAlert('Select all fields', 'Please select Question');
     }
 
-    this.props.navigation.navigate('QuestionDetail', {
-      sClass,
-      sSubject,
-      sChapter,
-      sQuestion,
-    });
+    this.props.navigation.navigate(
+      'QuestionDetail',
+      this.generateQuestionDetailNavigationParams(sChapter, sQuestion),
+    );
   }
 
   render() {
-    const { sQuestion } = this.state;
-    const { params } = this.props.navigation.state;
+    const { loading, questions, sQuestion } = this.state;
     return (
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Question</Text>
-        <Content contentContainerStyle={{ flex: 1 }}>
-          <Image style={SCREEN_IMAGE_LOGO} source={logo} />
-          <Dropdown
-            sValue={sQuestion}
-            list={this.questionService.getQuestions(params!.sChapter)}
-            onValueChange={itemValue => this.onSelectionChange('sQuestion', itemValue)}
-          />
-          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
-            <Text>Next</Text>
-          </Button>
-        </Content>
+        {loading ? (
+          <Loading />
+        ) : (
+          <Content contentContainerStyle={{ flex: 1 }}>
+            <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+            <Dropdown
+              sValue={sQuestion}
+              list={questions}
+              onValueChange={itemValue => this.setState({ sQuestion: itemValue })}
+            />
+            <Button
+              onPress={this.nextButtonPressed}
+              style={{ alignSelf: 'center', marginTop: 10 }}>
+              <Text>Next</Text>
+            </Button>
+          </Content>
+        )}
       </Container>
     );
   }
