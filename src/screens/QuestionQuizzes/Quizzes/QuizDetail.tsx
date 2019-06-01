@@ -60,11 +60,12 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { params } = this.props.navigation.state;
     if (params) {
       const { sChapter } = params;
       if (sChapter) {
+        await this.quizService.init();
         const quizzes = this.quizService.getQuizzes(sChapter);
         if (quizzes.length > 0) {
           this.setState({ quizzes, totalQuizzes: quizzes.length }, this.loadNextQuestion);

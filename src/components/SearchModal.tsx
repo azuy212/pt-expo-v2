@@ -9,15 +9,15 @@ import {
 } from 'react-native';
 import { Header, Item, Icon, Input, Button } from 'native-base';
 import { headerHeight } from '../theme/header';
-import LectureService from '../services/lecture';
+import CourseService from '../services/course';
 import { NavigationScreenProps } from 'react-navigation';
 
-const lectureService = new LectureService();
+const courseService = new CourseService();
 
 type AllSearchProps = { search: string } & IProps & NavigationScreenProps;
 
 const SearchResult = (props: AllSearchProps) => {
-  const result = lectureService.getSearchResult(props.search);
+  const result = courseService.getSearchResult(props.search);
   return (
     <View>
       <FlatList
@@ -69,13 +69,18 @@ export default class SearchModal extends Component<AllProps, IState> {
   state = {
     search: '',
   };
+  async componentDidMount() {
+    await courseService.init();
+  }
+
   render() {
     return (
       <Modal
         animationType='fade'
         transparent={false}
         visible={this.props.visible}
-        onRequestClose={this.props.hideModal}>
+        onRequestClose={this.props.hideModal}
+      >
         <View style={{ flex: 1 }}>
           <Header style={{ height: headerHeight }} searchBar={true} rounded={true}>
             <Item>

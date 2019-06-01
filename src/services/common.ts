@@ -26,7 +26,7 @@ export function getDistinctValues<T>(data: T[], key: string) {
 export function generateDropDownOptions(list: any[]): IDropDownOptions {
   return list.map((i: any) => {
     if (typeof i === 'string') {
-      return { label: i, value: i.toLowerCase() };
+      return { label: i, value: i };
     }
     return { label: i.toString(), value: i.toString() };
   });

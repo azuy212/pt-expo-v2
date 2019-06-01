@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 
 import Auth from '@aws-amplify/auth';
 import { Font } from 'expo';
+import Loading from '../components/Loading';
 
 interface State {
   userToken: any;
@@ -38,7 +39,7 @@ export default class AuthLoadingScreen extends React.Component<NavigationScreenP
   render() {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size='large' color='#fff' />
+        <Loading />
       </View>
     );
   }

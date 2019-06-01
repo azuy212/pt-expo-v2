@@ -1,21 +1,47 @@
 import { getDistinctValues, generateDropDownOptions } from './common';
 import { IQuestion } from '../models/question';
-
-const questionData: IQuestion[] = require('../../assets/trans_question.json');
+import { dynamoDBClient, questionTableName } from '../config/aws-config';
+import { Alert } from 'react-native';
 
 export const FilesBaseUrl = 'https://s3.amazonaws.com/pocket-tutor-assets/subsection';
 
 export default class QuestionService {
+  private questionData: IQuestion[] = [];
+
   constructor(private sClass: string, private sSubject: string) {}
+
+  async init() {
+    try {
+      const { Items } = await dynamoDBClient
+        .scan({
+          TableName: questionTableName,
+          ExpressionAttributeNames: {
+            '#class': 'class',
+            '#subject': 'subject',
+          },
+          ExpressionAttributeValues: {
+              ':sClass': this.sClass,
+              ':sSubject': this.sSubject,
+          },
+          FilterExpression: '#class = :sClass AND #subject = :sSubject',
+         })
+        .promise();
+      if (Items) {
+        this.questionData = Items as IQuestion[];
+      }
+    } catch (error) {
+      console.log('Error', error);
+      Alert.alert(
+        'Error Fetching Data',
+        'Error while fetching data from remote server',
+      );
+    }
+  }
 
   getChapters() {
     const sections = generateDropDownOptions(
       getDistinctValues(
-        questionData.filter(
-          data =>
-            data.class.toLowerCase() === this.sClass &&
-            data.subject.toLowerCase() === this.sSubject,
-        ),
+        this.questionData,
         'chapter',
       ),
     );
@@ -26,10 +52,8 @@ export default class QuestionService {
   getQuestions(sChapter: string) {
     const titles = generateDropDownOptions(
       getDistinctValues(
-        questionData.filter(
+        this.questionData.filter(
           data =>
-            data.class.toLowerCase() === this.sClass &&
-            data.subject.toLowerCase() === this.sSubject &&
             data.chapter.toString() === sChapter,
         ),
         'question',
@@ -46,12 +70,10 @@ export default class QuestionService {
   }
 
   getQuestionDetail(sChapter: string, sQuestion: string) {
-    return questionData.find(
+    return this.questionData.find(
       data =>
-        data.class.toLowerCase() === this.sClass &&
-        data.subject.toLowerCase() === this.sSubject &&
         data.chapter.toString() === sChapter.toString() &&
-        data.question.toLowerCase() === sQuestion.toLowerCase(),
+        data.question === sQuestion,
     );
   }
 

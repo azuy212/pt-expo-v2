@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Button, Container, Content, Text } from 'native-base';
 
@@ -10,22 +10,30 @@ import { showErrorAlert } from '../../services/error';
 
 import logo from '../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../theme/image';
+import { IDropDownOptions } from '../../models/dropdown';
+import Loading from '../../components/Loading';
 
 /******************************** Screen Title /********************************/
 const SCREEN_TITLE = 'Course';
 /******************************************************************************/
 
 interface IState {
+  loading: boolean;
+  classes: IDropDownOptions;
   sClass: string;
+  subjects: IDropDownOptions;
   sSubject: string;
   sType: string;
 }
 
-type StateKeys = keyof IState;
+type StateKeys = 'sClass' | 'sSubject' | 'sType';
 
 export default class CourseSelection extends Component<NavigationScreenProps, IState> {
   state = {
+    loading: true,
+    classes: [{ label: '', value: '' }],
     sClass: '',
+    subjects: [{ label: '', value: '' }],
     sSubject: '',
     sType: '',
   };
@@ -36,6 +44,14 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
     super(props);
 
     this.courseService = new CourseService();
+  }
+
+  async componentDidMount() {
+    await this.courseService.init();
+    this.setState({
+      loading: false,
+      classes: this.courseService.getClasses(),
+    });
   }
 
   onSelectionChange(key: StateKeys, value: string) {
@@ -54,43 +70,59 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
       return showErrorAlert('Select all fields', 'Please select Subject');
     }
     if (sType === '') {
-      return showErrorAlert('Select all fields', 'Please select Lecture/Questions');
+      return showErrorAlert(
+        'Select all fields',
+        'Please select Lecture/Questions',
+      );
     }
 
-    if (sType === 'lectures') {
+    if (sType === 'Lectures') {
       this.props.navigation.navigate('LectureSelection', { sClass, sSubject });
     } else {
-      this.props.navigation.navigate('QuestionQuizzesSelection', { sClass, sSubject });
+      this.props.navigation.navigate('QuestionQuizzesSelection', {
+        sClass,
+        sSubject,
+      });
     }
   }
 
   render() {
-    const { sClass, sSubject, sType } = this.state;
+    const { loading, classes, sClass, sSubject, sType } = this.state;
     return (
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Course</Text>
-        <Content contentContainerStyle={{ flex: 1 }}>
-          <Image style={SCREEN_IMAGE_LOGO} source={logo} />
-          <Dropdown
-            sValue={sClass}
-            list={this.courseService.getClasses()}
-            onValueChange={itemValue => this.onSelectionChange('sClass', itemValue)}
-          />
-          <Dropdown
-            sValue={sSubject}
-            list={this.courseService.getSubjects(sClass)}
-            onValueChange={itemValue => this.onSelectionChange('sSubject', itemValue)}
-          />
-          <Dropdown
-            sValue={sType}
-            list={this.courseService.getTypes()}
-            onValueChange={itemValue => this.onSelectionChange('sType', itemValue)}
-          />
-          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginEnd: 20 }}>
-            <Text>Next</Text>
-          </Button>
-        </Content>
+        {loading ? (
+          <Loading />
+        ) : (
+          <Content contentContainerStyle={{ flex: 1 }}>
+            <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+            <Dropdown
+              sValue={sClass}
+              list={classes}
+              onValueChange={itemValue =>
+                this.onSelectionChange('sClass', itemValue)
+              }
+            />
+            <Dropdown
+              sValue={sSubject}
+              list={this.courseService.getSubjects(sClass)}
+              onValueChange={itemValue =>
+                this.onSelectionChange('sSubject', itemValue)
+              }
+            />
+            <Dropdown
+              sValue={sType}
+              list={this.courseService.getTypes()}
+              onValueChange={itemValue =>
+                this.onSelectionChange('sType', itemValue)
+              }
+            />
+            <Button onPress={this.nextButtonPressed} style={styles.nextButton}>
+              <Text>Next</Text>
+            </Button>
+          </Content>
+        )}
       </Container>
     );
   }
@@ -107,5 +139,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     marginTop: 10,
+  },
+  nextButton: {
+    alignSelf: 'center',
+    marginEnd: 20,
   },
 });

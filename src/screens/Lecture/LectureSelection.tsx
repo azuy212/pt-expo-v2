@@ -10,23 +10,33 @@ import { showErrorAlert } from '../../services/error';
 
 import logo from '../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../theme/image';
+import { IDropDownOptions } from '../../models/dropdown';
+import Loading from '../../components/Loading';
 
 /******************************** Screen Title /********************************/
 const SCREEN_TITLE = 'Lecture';
 /******************************************************************************/
 
 interface IState {
+  loading: boolean;
+  titles: IDropDownOptions;
   sTitle: string;
+  sections: IDropDownOptions;
   sSection: string;
+  subsections: IDropDownOptions;
   sSubsection: string;
 }
 
-type StateKeys = keyof IState;
+type StateKeys = 'sTitle' | 'sSection' | 'sSubsection';
 
 export default class LectureSelection extends Component<NavigationScreenProps, IState> {
   state = {
+    loading: true,
+    titles: [{ label: 'Select Title', value: '' }],
     sTitle: '',
+    sections: [{ label: 'Select Section', value: '' }],
     sSection: '',
+    subsections: [{ label: 'Select Subsection', value: '' }],
     sSubsection: '',
   };
 
@@ -47,59 +57,138 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
     }
   }
 
-  onSelectionChange(key: StateKeys, value: string) {
+  async componentDidMount() {
+    await this.lectureService.init();
     this.setState({
-      [key]: value,
-    } as Pick<IState, StateKeys>);
-  }
-
-  nextButtonPressed = () => {
-    const { sClass, sSubject } = this.props.navigation.state.params!;
-    const { sTitle, sSection, sSubsection } = this.state;
-
-    if (sTitle === '') {
-      return showErrorAlert('Select all fields', 'Please select Title of Lecture');
-    }
-    if (sSection === '') {
-      return showErrorAlert('Select all fields', 'Please select Section of Title');
-    }
-
-    this.props.navigation.navigate('LectureDetail', {
-      sClass,
-      sSubject,
-      sTitle,
-      sSection,
-      sSubsection,
+      loading: false,
+      titles: this.lectureService.getTitles(),
     });
   }
 
-  render() {
+  onSelectionChange(key: StateKeys, value: string) {
+    switch (key) {
+      case 'sTitle':
+        this.setState({
+          sTitle: value,
+          sections: this.lectureService.getSections(value),
+        });
+        break;
+      case 'sSection':
+        this.setState({
+          sSection: value,
+          subsections: this.lectureService.getSubsections(
+            this.state.sTitle,
+            value,
+          ),
+        });
+        break;
+      case 'sSubsection':
+        this.setState({ sSubsection: value });
+        break;
+      default:
+        break;
+    }
+  }
+
+  generateLectureDetailNavigationParams(
+    sTitle: string,
+    sSection: string,
+    sSubsection: string,
+  ) {
+    const lectureDetails = this.lectureService.getLectureDetail(
+      sTitle,
+      sSection,
+      sSubsection,
+    );
+    if (lectureDetails) {
+      const { filePath, videoPath } = this.lectureService.createFilePath(
+        lectureDetails.course,
+        lectureDetails.id_file,
+        lectureDetails.chapter,
+        lectureDetails.file_name,
+        lectureDetails.lecture_video,
+      );
+      return {
+        filePath,
+        videoPath,
+        sTitle,
+        error: false,
+      };
+    }
+    return {
+      error: true,
+    };
+  }
+
+  nextButtonPressed = () => {
     const { sTitle, sSection, sSubsection } = this.state;
+
+    if (sTitle === '') {
+      return showErrorAlert(
+        'Select all fields',
+        'Please select Title of Lecture',
+      );
+    }
+    if (sSection === '') {
+      return showErrorAlert(
+        'Select all fields',
+        'Please select Section of Title',
+      );
+    }
+
+    this.props.navigation.navigate(
+      'LectureDetail',
+      this.generateLectureDetailNavigationParams(sTitle, sSection, sSubsection),
+    );
+  }
+
+  render() {
+    const {
+      loading,
+      titles,
+      sTitle,
+      sections,
+      sSection,
+      subsections,
+      sSubsection,
+    } = this.state;
     return (
       <Container>
         <HeaderComponent {...this.props} title={SCREEN_TITLE} />
         <Text style={styles.textStyle}>Select Lecture</Text>
-        <Content contentContainerStyle={{ flex: 1 }}>
-          <Image style={SCREEN_IMAGE_LOGO} source={logo} />
-          <Dropdown
-            sValue={sTitle}
-            list={this.lectureService.getTitles()}
-            onValueChange={itemValue => this.onSelectionChange('sTitle', itemValue)}
-          />
-          <Dropdown
-            sValue={sSection}
-            list={this.lectureService.getSections(sTitle)}
-            onValueChange={itemValue => this.onSelectionChange('sSection', itemValue)}
-          />
-          <Dropdown
-            sValue={sSubsection}
-            list={this.lectureService.getSubsections(sTitle, sSection)}
-            onValueChange={itemValue => this.onSelectionChange('sSubsection', itemValue)}
-          />
-          <Button onPress={this.nextButtonPressed} style={{ alignSelf: 'center', marginTop: 10 }}>
-            <Text>Next</Text>
-          </Button>
-        </Content>
+        {loading ? (
+          <Loading />
+        ) : (
+          <Content contentContainerStyle={{ flex: 1 }}>
+            <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+            <Dropdown
+              sValue={sTitle}
+              list={titles}
+              onValueChange={itemValue =>
+                this.onSelectionChange('sTitle', itemValue)
+              }
+            />
+            <Dropdown
+              sValue={sSection}
+              list={sections}
+              onValueChange={itemValue =>
+                this.onSelectionChange('sSection', itemValue)
+              }
+            />
+            <Dropdown
+              sValue={sSubsection}
+              list={subsections}
+              onValueChange={itemValue =>
+                this.onSelectionChange('sSubsection', itemValue)
+              }
+            />
+            <Button
+              onPress={this.nextButtonPressed}
+              style={{ alignSelf: 'center', marginTop: 10 }}>
+              <Text>Next</Text>
+            </Button>
+          </Content>
+        )}
       </Container>
     );
   }

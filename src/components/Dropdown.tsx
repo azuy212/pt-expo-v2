@@ -9,9 +9,6 @@ interface IProps {
   sValue: string;
 }
 export default class Dropdown extends Component<IProps> {
-  state = {
-    language: 'java',
-  };
   render() {
     return (
       <Picker
