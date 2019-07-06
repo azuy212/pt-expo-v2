@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 
 import Auth from '@aws-amplify/auth';
-import { Font } from 'expo';
+import * as Font from 'expo-font';
 import Loading from '../components/Loading';
 
 interface State {
@@ -29,9 +29,9 @@ export default class AuthLoadingScreen extends React.Component<NavigationScreenP
       })
       .catch(err => console.log(err));
     await Font.loadAsync({
-      Roboto: require('native-base/Fonts/Roboto.ttf'),
-      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-      Ionicons: require('native-base/Fonts/Ionicons.ttf'),
+      Roboto: require('../../node_modules/native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('../../node_modules/native-base/Fonts/Roboto_medium.ttf'),
+      Ionicons: require('../../node_modules/native-base/Fonts/Ionicons.ttf'),
     });
     this.props.navigation.navigate(this.state.userToken ? 'App' : 'Auth');
   }
