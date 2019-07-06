@@ -43,7 +43,7 @@ export default class QuestionService {
       getDistinctValues(
         this.questionData,
         'chapter',
-      ),
+      ).sort((a: any, b: any) => a - b),
     );
     sections.unshift({ label: 'Select Chapter', value: '' });
     return sections;

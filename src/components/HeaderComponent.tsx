@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Header, Left, Button, Icon, Right, Body, Title, Item, Input, Text } from 'native-base';
+import { Header, Left, Button, Icon, Right, Body, Title } from 'native-base';
 import { NavigationScreenProps } from 'react-navigation';
-import { StatusBar, StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet, Image } from 'react-native';
 
-import { headerHeight } from '../theme/header';
 import SearchModal from './SearchModal';
 
 const statusBarHeight = StatusBar.currentHeight || 0;
@@ -35,25 +34,33 @@ export default class HeaderComponent extends Component<AllProps, IState> {
   }
 
   render() {
+    const { isVideoAvailable, videoIconPress, title, navigation } = this.props;
     return (
-      <Header style={{ height: headerHeight + statusBarHeight }}>
+      <Header transparent={true} span={true}>
         <Left style={styles.header}>
-          <Button transparent={true} onPress={() => this.props.navigation.openDrawer()}>
-            <Icon name='menu' />
+          <Button transparent={true} onPress={() => navigation.openDrawer()}>
+            <Icon style={{ color: 'black' }} name='menu' />
           </Button>
         </Left>
         <Body style={styles.headerTitle}>
-          <Title>{this.props.title}</Title>
+          <Image
+            source={require('../images/logo.png')}
+            style={{ height: 75, width: 100, marginRight: 20 }}
+          />
         </Body>
         <Right style={styles.header}>
           <Icon
-            name={this.props.isVideoAvailable ? 'play-circle-outline' : 'search'}
+            name={isVideoAvailable ? 'play-circle-outline' : 'search'}
             type='MaterialIcons'
             style={styles.iconRight}
-            onPress={this.props.isVideoAvailable ? this.props.videoIconPress : this.enableSearch}
+            onPress={isVideoAvailable ? videoIconPress : this.enableSearch}
           />
         </Right>
-        <SearchModal visible={this.state.enableSearch} hideModal={this.disableSearch} {...this.props} />
+        <SearchModal
+          visible={this.state.enableSearch}
+          hideModal={this.disableSearch}
+          {...this.props}
+        />
       </Header>
     );
   }
@@ -61,16 +68,19 @@ export default class HeaderComponent extends Component<AllProps, IState> {
 
 const styles = StyleSheet.create({
   header: {
+    flex: 1,
     marginTop: statusBarHeight,
   },
   headerTitle: {
     flex: 3,
     marginTop: statusBarHeight,
     marginLeft: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   iconRight: {
     fontSize: 30,
-    color: 'white',
+    color: 'black',
     marginRight: 8,
   },
 });

@@ -14,7 +14,7 @@ export default class CourseService {
         .scan({ TableName: subsectionTableName })
         .promise();
       if (Items) {
-        this.subSectionData = Items as ISubsection[];
+        this.subSectionData = (Items as ISubsection[]).sort((a, b) => a.id_subsection - b.id_subsection);
       }
     } catch (error) {
       console.log('Error', error);

@@ -99,8 +99,8 @@ export default class QuestionQuizzesSelection extends Component<NavigationScreen
         {loading ? (
           <Loading />
         ) : (
-          <Content contentContainerStyle={{ flex: 1 }}>
-            <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+          <Content contentContainerStyle={styles.container}>
+            {/* <Image style={SCREEN_IMAGE_LOGO} source={logo} /> */}
             <Dropdown
               sValue={sChapter}
               list={chapters}
@@ -117,7 +117,8 @@ export default class QuestionQuizzesSelection extends Component<NavigationScreen
             />
             <Button
               onPress={this.nextButtonPressed}
-              style={{ alignSelf: 'center', marginTop: 10 }}>
+              style={{ alignSelf: 'center', marginTop: 10 }}
+            >
               <Text>Next</Text>
             </Button>
           </Content>
@@ -137,6 +138,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     alignSelf: 'center',
-    marginTop: 10,
+    // marginTop: 10,
   },
 });

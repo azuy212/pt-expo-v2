@@ -82,11 +82,11 @@ export default class SearchModal extends Component<AllProps, IState> {
         onRequestClose={this.props.hideModal}
       >
         <View style={{ flex: 1 }}>
-          <Header style={{ height: headerHeight }} searchBar={true} rounded={true}>
+          <Header style={{ height: headerHeight }} searchBar={true} rounded={true} transparent={true}>
             <Item>
               <Icon name='md-arrow-back' onPress={this.props.hideModal} />
               <Input placeholder='Search' value={this.state.search} onChangeText={text => this.setState({ search: text })} />
-              <Icon name='md-close-circle' onPress={() => this.setState({ search: '' })} />
+              {this.state.search ? <Icon name='md-close-circle' onPress={() => this.setState({ search: '' })} /> : null}
             </Item>
             <Button transparent={true}>
               <Text>Search</Text>

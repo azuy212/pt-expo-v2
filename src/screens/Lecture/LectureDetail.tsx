@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, NativeSyntheticEvent, WebViewMessageEventData } from 'react-native';
+import { StyleSheet, NativeSyntheticEvent, WebViewMessageEventData, Image } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { Container, Content, View, H1 } from 'native-base';
 
 import HeaderComponent from '../../components/HeaderComponent';
 import { FilesBaseUrl } from '../../services/lecture';
 import WebViewFlex from '../../components/WebViewFlex';
+import { Header } from 'react-native-elements';
 
 interface IState {
   filePath: string;
@@ -87,5 +88,13 @@ const styles = StyleSheet.create({
     flex: 5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerStyle: {
+    backgroundColor: '#FFF',
+  },
+  logoStyle: {
+    width: 100,
+    height: 75,
+    marginBottom: 20,
   },
 });
