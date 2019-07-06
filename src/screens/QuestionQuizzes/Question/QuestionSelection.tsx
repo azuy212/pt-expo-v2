@@ -108,8 +108,8 @@ export default class QuestionSelection extends Component<NavigationScreenProps, 
         {loading ? (
           <Loading />
         ) : (
-          <Content contentContainerStyle={{ flex: 1 }}>
-            <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+          <Content contentContainerStyle={styles.container}>
+            {/* <Image style={SCREEN_IMAGE_LOGO} source={logo} /> */}
             <Dropdown
               sValue={sQuestion}
               list={questions}
@@ -117,7 +117,8 @@ export default class QuestionSelection extends Component<NavigationScreenProps, 
             />
             <Button
               onPress={this.nextButtonPressed}
-              style={{ alignSelf: 'center', marginTop: 10 }}>
+              style={{ alignSelf: 'center', marginTop: 10 }}
+            >
               <Text>Next</Text>
             </Button>
           </Content>

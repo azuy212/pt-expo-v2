@@ -201,11 +201,13 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
                 <H1>No Data Found!</H1>
               </View>
             ) : (
-              <WebViewFlex
-                style={styles.webView}
-                url={`${FilesBaseUrl}/${filePath}`}
-                onMessage={this.handleError}
-              />
+              filePath ? (
+                <WebViewFlex
+                  style={styles.webView}
+                  url={`${FilesBaseUrl}/${filePath}`}
+                  onMessage={this.handleError}
+                />
+              ) : null
             )}
             <Image style={[SCREEN_IMAGE_LOGO, { flex: 3, opacity: 0.2 }]} source={logo} />
             {error === false ? (

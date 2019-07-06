@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { Text, StyleSheet, StyleProp, ViewStyle, GestureResponderEvent } from 'react-native';
 
 import moment from 'moment';
 import { Header } from 'react-native-elements';
@@ -12,8 +12,8 @@ interface IState {
 interface IProps {
   style?: StyleProp<ViewStyle>;
   stop?: boolean;
-  onBackPress: Function;
-  onForwardPress: Function;
+  onBackPress: (event: GestureResponderEvent) => void;
+  onForwardPress: (event: GestureResponderEvent) => void;
 }
 
 export default class QuizHeader extends Component<IProps, IState> {
@@ -47,16 +47,14 @@ export default class QuizHeader extends Component<IProps, IState> {
       <Header
         leftComponent={{
           icon: 'arrow-back',
-          color: '#fff',
+          color: '#000000',
           onPress: this.props.onBackPress,
-          underlayColor: '#3D6DCC',
         }}
         centerComponent={{ text: this.state.elapsedTime, style: styles.elapsedTime }}
         rightComponent={{
           icon: 'arrow-forward',
-          color: '#fff',
+          color: '#000000',
           onPress: this.props.onForwardPress,
-          underlayColor: '#3D6DCC',
         }}
         containerStyle={[styles.container, this.props.style]}
       />
@@ -68,11 +66,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 0,
-    backgroundColor: '#3f51b5',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
+    marginTop: -10,
   },
   elapsedTime: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontWeight: 'bold',
     fontSize: 20,
   },

@@ -95,8 +95,8 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
         {loading ? (
           <Loading />
         ) : (
-          <Content contentContainerStyle={{ flex: 1 }}>
-            <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+          <Content contentContainerStyle={styles.container}>
+            {/* <Image style={SCREEN_IMAGE_LOGO} source={logo} /> */}
             <Dropdown
               sValue={sClass}
               list={classes}
@@ -135,10 +135,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textStyle: {
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: 'bold',
     alignSelf: 'center',
-    marginTop: 10,
+    // marginTop: 10,
   },
   nextButton: {
     alignSelf: 'center',

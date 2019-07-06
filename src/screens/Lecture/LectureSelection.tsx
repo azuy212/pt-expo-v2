@@ -159,8 +159,8 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
         {loading ? (
           <Loading />
         ) : (
-          <Content contentContainerStyle={{ flex: 1 }}>
-            <Image style={SCREEN_IMAGE_LOGO} source={logo} />
+          <Content contentContainerStyle={styles.container}>
+            {/* <Image style={SCREEN_IMAGE_LOGO} source={logo} /> */}
             <Dropdown
               sValue={sTitle}
               list={titles}
@@ -184,7 +184,8 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
             />
             <Button
               onPress={this.nextButtonPressed}
-              style={{ alignSelf: 'center', marginTop: 10 }}>
+              style={{ alignSelf: 'center', marginTop: 10 }}
+            >
               <Text>Next</Text>
             </Button>
           </Content>
@@ -204,6 +205,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     alignSelf: 'center',
-    marginTop: 10,
+    // marginTop: 10,
   },
 });
