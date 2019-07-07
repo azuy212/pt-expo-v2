@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Header, Left, Button, Icon, Right, Body, Title } from 'native-base';
 import { NavigationScreenProps } from 'react-navigation';
-import { StatusBar, StyleSheet, Image } from 'react-native';
+import { StatusBar, StyleSheet, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
 
 import SearchModal from './SearchModal';
 
@@ -43,10 +43,12 @@ export default class HeaderComponent extends Component<AllProps, IState> {
           </Button>
         </Left>
         <Body style={styles.headerTitle}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Home')}>
           <Image
             source={require('../images/logo.png')}
             style={{ height: 75, width: 100, marginRight: 20 }}
           />
+        </TouchableOpacity>
         </Body>
         <Right style={styles.header}>
           <Icon
