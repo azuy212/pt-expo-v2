@@ -8,7 +8,7 @@ import SearchModal from './SearchModal';
 const statusBarHeight = StatusBar.currentHeight || 0;
 
 interface IProps {
-  title: string;
+  title?: string;
   isVideoAvailable?: boolean;
   videoIconPress?: () => void;
   enableSearch?: boolean;
@@ -34,7 +34,7 @@ export default class HeaderComponent extends Component<AllProps, IState> {
   }
 
   render() {
-    const { isVideoAvailable, videoIconPress, title, navigation } = this.props;
+    const { isVideoAvailable, videoIconPress, navigation } = this.props;
     return (
       <Header transparent={true} span={true}>
         <Left style={styles.header}>

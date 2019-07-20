@@ -1,33 +1,182 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
-import { H1, H3, Container, Content } from 'native-base';
+import { H1, Container, Row, Grid, Col, Button, Text } from 'native-base';
 
 import HeaderComponent from '../../../components/HeaderComponent';
 import { NavigationScreenProps } from 'react-navigation';
 import { calculatePercentage } from '../../../services/common';
+import QuizResultField from '../../../components/QuizResultField';
+import moment from 'moment';
 
-const QuizComplete = (props: NavigationScreenProps) => {
-  const { correctAnswers, totalQuizzes, skipped } = props.navigation.state.params!;
-  return (
-    <Container>
-      <HeaderComponent title='Quiz Result' {...props} />
-      <H1 style={{ margin: 20 }}>You have completed the quiz!</H1>
-      <Content contentContainerStyle={styles.container}>
-        <H3>Score: {correctAnswers}</H3>
-        <H3>Skipped: {skipped}</H3>
-        <H3>Total: {totalQuizzes}</H3>
-        <H3>Percentage: {calculatePercentage(correctAnswers, totalQuizzes)}%</H3>
-      </Content>
-    </Container>
-  );
-};
+interface IState {
+  correct: number;
+  incorrect: number;
+  total: number;
+  skipped: number;
+  percentage: number;
+  startTime: number;
+  endTime: number;
+  duration: number;
+}
 
-export default QuizComplete;
+type IProps = NavigationScreenProps;
+
+export default class QuizComplete extends Component<IProps, IState> {
+  state = {
+    correct: 0,
+    incorrect: 0,
+    total: 0,
+    skipped: 0,
+    percentage: 0,
+    startTime: 0,
+    endTime: 0,
+    duration: 0,
+  };
+
+  componentDidMount() {
+    const { params } = this.props.navigation.state;
+    const { correct, total, skipped, startTime, endTime } = params!;
+    this.setState({
+      correct,
+      total,
+      skipped,
+      startTime,
+      endTime,
+      duration: this.getDuration(startTime, endTime),
+      incorrect: total - correct - skipped,
+      percentage: calculatePercentage(correct, total),
+    });
+  }
+
+  isStartAndEndDateSame = () => {
+    const { startTime, endTime } = this.state;
+    const start = moment(startTime);
+    const end = moment(endTime);
+    return start.isSame(end, 'date');
+  }
+
+  get getStartTimeString() {
+    const start = moment(this.state.startTime);
+    return this.isStartAndEndDateSame()
+      ? start.format('hh:mm:ss a')
+      : start.format('MMM DD, YY hh:mm:ss a');
+  }
+
+  get getEndTimeString() {
+    const end = moment(this.state.endTime);
+    return this.isStartAndEndDateSame()
+      ? end.format('hh:mm:ss a')
+      : end.format('MMM DD, YY hh:mm:ss a');
+  }
+
+  getDuration = (start: number, end: number) => {
+    const duration = moment.duration(moment(end).diff(moment(start)));
+    return duration.asSeconds();
+  }
+
+  retryQuiz = () => {
+    // this.props.navigation.navigate();
+  }
+
+  startAnotherQuiz = () => {
+    this.props.navigation.navigate('Home');
+  }
+
+  getPercentageColor = () => {};
+
+  render() {
+    const { correct, incorrect, total, skipped, duration } = this.state;
+    const percentage = calculatePercentage(correct, total);
+    return (
+      <Container>
+        <HeaderComponent title='Quiz Result' {...this.props} />
+        <H1 style={styles.title}>Quiz Result!</H1>
+        <Grid>
+          <Row>
+            <Grid>
+              <Row style={styles.rowMargin}>
+                <Col>
+                  <QuizResultField title='Score' value={`${percentage}%`} />
+                </Col>
+                <Col>
+                  <QuizResultField title='Attempted' value={total} />
+                </Col>
+              </Row>
+              <Row style={styles.rowMargin}>
+                <Col>
+                  <QuizResultField title='Correct' value={correct} />
+                </Col>
+                <Col>
+                  <QuizResultField title='Incorrect' value={incorrect} />
+                </Col>
+              </Row>
+              <Row>
+                <Col />
+                <Col>
+                  <QuizResultField title='Skipped' value={skipped} />
+                </Col>
+                <Col />
+              </Row>
+            </Grid>
+          </Row>
+          <Row>
+            <Grid>
+              <Row style={styles.centered}>
+                <QuizResultField
+                  title='Started'
+                  value={this.getStartTimeString}
+                />
+              </Row>
+              <Row style={styles.centered}>
+                <QuizResultField
+                  title='Completed'
+                  value={this.getEndTimeString}
+                />
+              </Row>
+              <Row style={styles.centered}>
+                <QuizResultField title='Duration' value={`${duration} s`} />
+              </Row>
+            </Grid>
+          </Row>
+          <Row>
+            <Grid style={styles.centered}>
+              <Row>
+                <Button style={styles.button}>
+                  <Text>Retry Quiz</Text>
+                </Button>
+              </Row>
+              <Row>
+                <Button onPress={this.startAnotherQuiz} style={styles.button}>
+                  <Text>Start Another Quiz</Text>
+                </Button>
+              </Row>
+            </Grid>
+          </Row>
+        </Grid>
+      </Container>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
+  },
+  title: {
+    margin: 20,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  rowMargin: {
+    marginLeft: 0,
+  },
+  centered: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    alignSelf: 'center',
   },
 });

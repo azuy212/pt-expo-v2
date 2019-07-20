@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, StyleProp, ViewStyle, GestureResponderEvent } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  GestureResponderEvent,
+} from 'react-native';
 
 import moment from 'moment';
 import { Header } from 'react-native-elements';
@@ -10,6 +17,7 @@ interface IState {
 }
 
 interface IProps {
+  title: string;
   style?: StyleProp<ViewStyle>;
   stop?: boolean;
   onBackPress: (event: GestureResponderEvent) => void;
@@ -30,7 +38,9 @@ export default class QuizHeader extends Component<IProps, IState> {
       if (!this.props.stop) {
         const now = moment();
         const elapsedTime = moment.utc(
-          moment(now, 'HH:mm:ss').diff(moment(this.state.startTime, 'HH:mm:ss')),
+          moment(now, 'HH:mm:ss').diff(
+            moment(this.state.startTime, 'HH:mm:ss'),
+          ),
         );
 
         this.setState({ elapsedTime: elapsedTime.format('HH:mm:ss') });
@@ -43,6 +53,7 @@ export default class QuizHeader extends Component<IProps, IState> {
   }
 
   render() {
+    const { elapsedTime } = this.state;
     return (
       <Header
         leftComponent={{
@@ -50,7 +61,11 @@ export default class QuizHeader extends Component<IProps, IState> {
           color: '#000000',
           onPress: this.props.onBackPress,
         }}
-        centerComponent={{ text: this.state.elapsedTime, style: styles.elapsedTime }}
+        centerComponent={
+          <View style={styles.centerComponent}>
+            <Text style={styles.quizTitle}>{this.props.title}</Text>
+            <Text style={styles.elapsedTime}>{elapsedTime}</Text>
+          </View>}
         rightComponent={{
           icon: 'arrow-forward',
           color: '#000000',
@@ -70,7 +85,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: -10,
   },
+  centerComponent: {
+    marginBottom: 10,
+  },
+  quizTitle: {
+    textAlign: 'center',
+    color: '#000000',
+    fontWeight: 'bold',
+    fontSize: 25,
+  },
   elapsedTime: {
+    textAlign: 'center',
     color: '#000000',
     fontWeight: 'bold',
     fontSize: 20,

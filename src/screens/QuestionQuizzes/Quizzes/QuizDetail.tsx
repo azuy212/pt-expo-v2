@@ -29,9 +29,12 @@ interface IState {
   skipped: number;
   error: boolean | null;
   loading: boolean | null;
+  startTime: number;
 }
 
-export default class QuizDetail extends PureComponent<NavigationScreenProps, IState> {
+type IProps = NavigationScreenProps;
+
+export default class QuizDetail extends PureComponent<IProps, IState> {
   state = {
     quizzes: [],
     filePath: '',
@@ -41,6 +44,7 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
     skipped: 0,
     error: null,
     loading: null,
+    startTime: 0,
   } as IState;
 
   private quizService!: QuizService;
@@ -68,9 +72,15 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
         await this.quizService.init();
         const quizzes = this.quizService.getQuizzes(sChapter);
         if (quizzes.length > 0) {
-          this.setState({ quizzes, totalQuizzes: quizzes.length }, this.loadNextQuestion);
+          this.setState(
+            { quizzes, totalQuizzes: quizzes.length },
+            this.loadNextQuestion,
+          );
         } else {
-          ToastAndroid.show('No Quiz found for this chapter', ToastAndroid.SHORT);
+          ToastAndroid.show(
+            'No Quiz found for this chapter',
+            ToastAndroid.SHORT,
+          );
           this.props.navigation.goBack();
         }
       }
@@ -78,21 +88,34 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
   }
 
   loadNextQuestion = () => {
-    const { currentQuizNumber, quizzes } = this.state;
-    if (quizzes.length > 0) {
-      const nextQuiz = quizzes[currentQuizNumber + 1];
-      const quizDetail = this.quizService.getQuizDetail(nextQuiz.id_quizzes.toString());
-      if (quizDetail) {
-        const filePath = this.quizService.createFilePath(
-          quizDetail.course,
-          quizDetail.file_name,
-          quizDetail.quiz_link,
+    const { currentQuizNumber, quizzes, totalQuizzes } = this.state;
+    if (currentQuizNumber + 1 !== totalQuizzes) {
+      if (quizzes.length > 0) {
+        const nextQuiz = quizzes[currentQuizNumber + 1];
+        const quizDetail = this.quizService.getQuizDetail(
+          nextQuiz.id_quizzes.toString(),
         );
-        this.setState({
-          filePath,
-          currentQuizNumber: currentQuizNumber + 1,
-        });
+        if (quizDetail) {
+          const filePath = this.quizService.createFilePath(
+            quizDetail.course,
+            quizDetail.file_name,
+            quizDetail.quiz_link,
+          );
+          this.setState({
+            filePath,
+            currentQuizNumber: currentQuizNumber + 1,
+          });
+        }
       }
+    } else {
+      const { skipped, startTime, correctAnswers } = this.state;
+      this.props.navigation.replace('QuizComplete', {
+        skipped,
+        startTime,
+        correct: correctAnswers,
+        total: totalQuizzes,
+        endTime: Date.now(),
+      });
     }
   }
 
@@ -100,7 +123,9 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
     const { currentQuizNumber, quizzes } = this.state;
     if (quizzes.length > 0) {
       const nextQuiz = quizzes[currentQuizNumber - 1];
-      const quizDetail = this.quizService.getQuizDetail(nextQuiz.id_quizzes.toString());
+      const quizDetail = this.quizService.getQuizDetail(
+        nextQuiz.id_quizzes.toString(),
+      );
       if (quizDetail) {
         const filePath = this.quizService.createFilePath(
           quizDetail.course,
@@ -115,24 +140,30 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
     }
   }
 
-  buttonListener = (answer: string) => {
-    const { currentQuizNumber, totalQuizzes, quizzes, correctAnswers } = this.state;
+  showAnswerStatusToast = (status: 'Correct' | 'Wrong' | 'Skipped') => {
+    Toast.show({
+      text: status,
+      duration: 500,
+      type:
+        status === 'Correct'
+          ? 'success'
+          : status === 'Wrong'
+          ? 'danger'
+          : 'warning',
+      onClose: this.loadNextQuestion,
+    });
+  }
+
+  answersButtonListener = (answer: string) => {
+    const { currentQuizNumber, quizzes, correctAnswers } = this.state;
     const currentQuiz = quizzes[currentQuizNumber];
     if (answer === currentQuiz.answer) {
-      this.setState({ correctAnswers: correctAnswers + 1 });
-      Toast.show({ text: 'Correct Answer!', duration: 700, type: 'success' });
+      this.setState({ correctAnswers: correctAnswers + 1 }, () =>
+        this.showAnswerStatusToast('Correct'),
+      );
     } else {
       console.log('ans:', currentQuiz.answer, currentQuiz.det_answer);
-      Toast.show({ text: 'Wrong Answer!', duration: 700, type: 'danger' });
-    }
-    if (currentQuizNumber + 1 !== totalQuizzes) {
-      this.loadNextQuestion();
-    } else {
-      console.log('Correct Answers:', correctAnswers);
-      this.props.navigation.navigate('QuizComplete', {
-        correctAnswers,
-        totalQuizzes,
-      });
+      this.showAnswerStatusToast('Wrong');
     }
   }
 
@@ -142,6 +173,9 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
     const error = regex.test(message);
     if (error !== this.state.error) {
       this.setState({ error });
+      if (!error) {
+        this.setState({ startTime: Date.now() });
+      }
     }
   }
 
@@ -159,60 +193,61 @@ export default class QuizDetail extends PureComponent<NavigationScreenProps, ISt
   }
 
   handleSkipPress = () => {
-    const { currentQuizNumber, totalQuizzes, correctAnswers, skipped } = this.state;
-    if (currentQuizNumber + 1 !== totalQuizzes) {
-      Toast.show({
-        text: 'Question Skipped!',
-        type: 'warning',
-        duration: 500,
-        onClose: () => {
-          this.loadNextQuestion();
-          this.setState({ skipped: skipped + 1 });
-        },
-      });
-    } else {
-      this.props.navigation.navigate('QuizComplete', {
-        skipped,
-        correctAnswers,
-        totalQuizzes,
-      });
-    }
+    const { skipped } = this.state;
+    this.setState({ skipped: skipped + 1 }, () =>
+      this.showAnswerStatusToast('Skipped'),
+    );
+  }
+
+  renderQuizHeader = () => {
+    const { currentQuizNumber, totalQuizzes, error } = this.state;
+    return error === false ? (
+      <QuizHeader
+        title={`Quiz ${currentQuizNumber + 1} of ${totalQuizzes}`}
+        style={{ flex: 0.1 }}
+        onBackPress={this.handleBackPress}
+        onForwardPress={this.handleSkipPress}
+      />
+    ) : null;
+  }
+
+  renderWebViewOrNoData = () => {
+    const { error, filePath } = this.state;
+    return error ? (
+      <View style={styles.error}>
+        <H1>No Data Found!</H1>
+      </View>
+    ) : filePath ? (
+      <WebViewFlex
+        style={styles.webView}
+        url={`${FilesBaseUrl}/${this.state.filePath}`}
+        onMessage={this.handleError}
+      />
+    ) : null;
+  }
+
+  renderQuizAnswerButton = () => {
+    return this.state.error === false ? (
+      <QuizAnswerButtons
+        style={styles.buttons}
+        buttonListener={this.answersButtonListener}
+      />
+    ) : null;
   }
 
   render() {
-    const { currentQuizNumber, totalQuizzes, filePath, error, loading } = this.state;
     return (
       <Root>
         <Container>
-          <HeaderComponent
-            {...this.props}
-            title={`Quiz ${currentQuizNumber + 1} of ${totalQuizzes}`}
-          />
-          {error === false ? (
-            <QuizHeader
-              style={{ flex: 0.1 }}
-              onBackPress={this.handleBackPress}
-              onForwardPress={this.handleSkipPress}
-            />
-          ) : null}
+          <HeaderComponent {...this.props} />
+          {this.renderQuizHeader()}
           <Content contentContainerStyle={styles.container}>
-            {error === true ? (
-              <View style={styles.error}>
-                <H1>No Data Found!</H1>
-              </View>
-            ) : (
-              filePath ? (
-                <WebViewFlex
-                  style={styles.webView}
-                  url={`${FilesBaseUrl}/${filePath}`}
-                  onMessage={this.handleError}
-                />
-              ) : null
-            )}
-            <Image style={[SCREEN_IMAGE_LOGO, { flex: 3, opacity: 0.2 }]} source={logo} />
-            {error === false ? (
-              <QuizAnswerButtons style={styles.buttons} buttonListener={this.buttonListener} />
-            ) : null}
+            {this.renderWebViewOrNoData()}
+            <Image
+              style={[SCREEN_IMAGE_LOGO, { flex: 3, opacity: 0.2 }]}
+              source={logo}
+            />
+            {this.renderQuizAnswerButton()}
           </Content>
         </Container>
       </Root>
