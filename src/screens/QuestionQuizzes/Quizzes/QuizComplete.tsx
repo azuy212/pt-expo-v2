@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
-import { H1, Container, Row, Grid, Col, Button, Text } from 'native-base';
+import { Container, Row, Grid, Col, Button, Text, H2, H3 } from 'native-base';
+import moment from 'moment';
 
 import HeaderComponent from '../../../components/HeaderComponent';
 import { NavigationScreenProps } from 'react-navigation';
 import { calculatePercentage } from '../../../services/common';
 import QuizResultField from '../../../components/QuizResultField';
-import moment from 'moment';
 
 interface IState {
   correct: number;
@@ -75,7 +75,12 @@ export default class QuizComplete extends Component<IProps, IState> {
   }
 
   retryQuiz = () => {
-    // this.props.navigation.navigate();
+    const { sClass, sSubject, sChapter } = this.props.navigation.state.params!;
+    this.props.navigation.navigate('QuizDetail', {
+      sClass,
+      sSubject,
+      sChapter,
+    });
   }
 
   startAnotherQuiz = () => {
@@ -86,11 +91,13 @@ export default class QuizComplete extends Component<IProps, IState> {
 
   render() {
     const { correct, incorrect, total, skipped, duration } = this.state;
+    const { sClass, sSubject, sChapter } = this.props.navigation.state.params!;
     const percentage = calculatePercentage(correct, total);
     return (
       <Container>
         <HeaderComponent title='Quiz Result' {...this.props} />
-        <H1 style={styles.title}>Quiz Result!</H1>
+            <H2 style={styles.title}>Quiz Result!</H2>
+            <H3 style={styles.title}>{sSubject} ({sClass}) - Chapter {sChapter}</H3>
         <Grid>
           <Row>
             <Grid>
@@ -141,7 +148,7 @@ export default class QuizComplete extends Component<IProps, IState> {
           <Row>
             <Grid style={styles.centered}>
               <Row>
-                <Button style={styles.button}>
+                <Button onPress={this.retryQuiz} style={styles.button}>
                   <Text>Retry Quiz</Text>
                 </Button>
               </Row>
@@ -165,7 +172,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    margin: 20,
+    marginBottom: 20,
     textAlign: 'center',
     fontWeight: 'bold',
   },

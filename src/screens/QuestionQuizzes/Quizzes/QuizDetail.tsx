@@ -109,7 +109,9 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
       }
     } else {
       const { skipped, startTime, correctAnswers } = this.state;
+      const { params } = this.props.navigation.state;
       this.props.navigation.replace('QuizComplete', {
+        ...params,
         skipped,
         startTime,
         correct: correctAnswers,
