@@ -26,7 +26,14 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.azuy.pockettutor"
-    }
+      "package": "com.azuy.pockettutor",
+      "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
+      "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
+    },
+    "isDetached": true,
+    "detach": {
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.11.4-sdk33.0.0-6a4f0f3e-1f1b-4c33-9155-d0237f6d7c34.tar.gz"
+    },
+    "scheme": "exp43d808f1c9f94d94be47a45e1b11a850"
   }
 }
