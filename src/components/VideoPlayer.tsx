@@ -1,5 +1,5 @@
 import React from 'react';
-import { Video } from 'expo';
+import { Video } from 'expo-av';
 import { Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
