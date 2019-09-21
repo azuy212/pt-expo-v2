@@ -27,6 +27,9 @@
     },
     "android": {
       "package": "com.azuy.pockettutor"
-    }
-  }
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
+  },
+  "displayName": "Pocket Tutor",
+  "name": "PocketTutor"
 }
