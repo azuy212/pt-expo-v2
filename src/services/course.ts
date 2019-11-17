@@ -1,20 +1,30 @@
 import { Alert } from 'react-native';
 import { ISubsection } from '../models/subsection';
-import { generateDropDownOptions, getDistinctValues } from './common';
+import { generateDropDownOptions, getDistinctValues, getClassSubjectKey } from './common';
 import { IDropDownOptions } from '../models/dropdown';
-
 import { dynamoDBClient, subsectionTableName } from '../config/aws-config';
+import Payments from './payments';
+import { InAppPurchase, IAPItemDetails } from 'expo-in-app-purchases/build/InAppPurchases.types';
 
 export default class CourseService {
   private subSectionData: ISubsection[] = [];
+  private availableCourses?: (InAppPurchase | IAPItemDetails)[];
+  private purchasedCourses?: (InAppPurchase | IAPItemDetails)[];
+  private payments = new Payments();
 
   async init() {
     try {
-      const { Items } = await dynamoDBClient
-        .scan({ TableName: subsectionTableName })
-        .promise();
+      if (!this.purchasedCourses) {
+        this.purchasedCourses = await this.payments.init();
+      }
+      if (!this.availableCourses) {
+        this.availableCourses = await this.payments.getProductsAsync();
+      }
+      const { Items } = await dynamoDBClient.scan({ TableName: subsectionTableName }).promise();
       if (Items) {
-        this.subSectionData = (Items as ISubsection[]).sort((a, b) => a.id_subsection - b.id_subsection);
+        this.subSectionData = (Items as ISubsection[]).sort(
+          (a, b) => a.id_subsection - b.id_subsection,
+        );
       }
     } catch (error) {
       console.log('Error', error);
@@ -32,10 +42,7 @@ export default class CourseService {
 
   getSubjects(sClass: any) {
     const subjects: IDropDownOptions = generateDropDownOptions(
-      getDistinctValues(
-        this.subSectionData.filter(data => data.class === sClass),
-        'subject',
-      ),
+      getDistinctValues(this.subSectionData.filter(data => data.class === sClass), 'subject'),
     );
     subjects.unshift({ label: 'Select Subject', value: '' });
     return subjects;
@@ -55,5 +62,19 @@ export default class CourseService {
         data.section.includes(search) ||
         data.subsection.includes(search),
     );
+  }
+
+  canGoNext(sClass: string, sSubject: string) {
+    let sCourse = '';
+    if (sClass !== 'Certification') {
+      sCourse = getClassSubjectKey(sClass, sSubject.toLowerCase());
+    } else {
+      sCourse = 'cert.all';
+    }
+    const pCourses = this.purchasedCourses!.map(course => course.productId.split('.')[1].toUpperCase());
+    if (pCourses.includes(sCourse)) {
+      return true;
+    }
+    this.payments.purchaseItemAsync(`course.${sCourse.toLowerCase()}`);
   }
 }

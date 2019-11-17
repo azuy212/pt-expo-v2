@@ -13,6 +13,7 @@
     "expo": "^35.0.0",
     "expo-av": "~7.0.0",
     "expo-font": "~6.0.1",
+    "expo-in-app-purchases": "^7.0.0",
     "moment": "^2.24.0",
     "native-base": "^2.8.0",
     "react": "16.8.3",
