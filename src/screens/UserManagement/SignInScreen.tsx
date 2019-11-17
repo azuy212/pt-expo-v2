@@ -66,6 +66,7 @@ export default class SignInScreen extends React.Component<NavigationScreenProps,
           style={styles.container}
           behavior='padding'
           enabled={true}
+          keyboardVerticalOffset={-200}
         >
           <TouchableWithoutFeedback
             style={styles.container}

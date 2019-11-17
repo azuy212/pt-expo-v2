@@ -105,6 +105,18 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        release {
+            if (project.hasProperty('POCKETTUTOR_UPLOAD_STORE_FILE')) {
+                storeFile file(POCKETTUTOR_UPLOAD_STORE_FILE)
+                storePassword POCKETTUTOR_UPLOAD_STORE_PASSWORD
+                keyAlias POCKETTUTOR_UPLOAD_KEY_ALIAS
+                keyPassword POCKETTUTOR_UPLOAD_KEY_PASSWORD
+            }
+        }
+    }
+
     splits {
         abi {
             reset()
@@ -117,6 +129,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
