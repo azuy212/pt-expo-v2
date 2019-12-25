@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Pocket Tutor</string>
+	<string>pocketTutorV2</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -57,26 +57,26 @@
 		</dict>
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Allow Pocket Tutor to access your calendar</string>
+	<string>Allow pocketTutorV2 to access your calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Pocket Tutor to use the camera</string>
+	<string>Allow pocketTutorV2 to use the camera</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Allow Pocket Tutor experiences to access your contacts</string>
+	<string>Allow pocketTutorV2 experiences to access your contacts</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Allow Pocket Tutor to use your location</string>
+	<string>Allow pocketTutorV2 to use your location</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow Pocket Tutor to use your location</string>
+	<string>Allow pocketTutorV2 to use your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow Pocket Tutor to use your location</string>
+	<string>Allow pocketTutorV2 to use your location</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow Pocket Tutor to access your microphone</string>
+	<string>Allow pocketTutorV2 to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Pocket Tutor to access your device's accelerometer</string>
+	<string>Allow pocketTutorV2 to access your device's accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Give Pocket Tutor periences permission to save photos</string>
+	<string>Give pocketTutorV2 periences permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give Pocket Tutor periences permission to access your photos</string>
+	<string>Give pocketTutorV2 periences permission to access your photos</string>
 	<key>NSRemindersUsageDescription</key>
-	<string>Allow Pocket Tutor to access your reminders</string>
+	<string>Allow pocketTutorV2 to access your reminders</string>
 </dict>
 </plist>
