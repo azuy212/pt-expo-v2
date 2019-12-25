@@ -1,4 +1,4 @@
-package com.pockettutor;
+package com.azs.pockettutor;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

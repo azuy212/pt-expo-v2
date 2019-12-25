@@ -1,4 +1,4 @@
-package com.pockettutor.generated;
+package com.azs.pockettutor.generated;
 
 import java.util.Arrays;
 import java.util.List;
