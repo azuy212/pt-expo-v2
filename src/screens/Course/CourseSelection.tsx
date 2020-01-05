@@ -45,7 +45,7 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
   constructor(props: NavigationScreenProps) {
     super(props);
 
-    this.courseService = new CourseService();
+    this.courseService = CourseService.getInstance();
   }
 
   async componentDidMount() {
@@ -65,7 +65,8 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
   nextButtonPressed = () => {
     const { sClass, sSubject, sType } = this.state;
 
-    if (this.courseService.canGoNext(sClass, sSubject)) {
+    const canGoNext = this.courseService.canGoNext(sClass, sSubject);
+    if (canGoNext) {
       if (sType === 'Lectures') {
         this.props.navigation.navigate('LectureSelection', { sClass, sSubject });
       } else {

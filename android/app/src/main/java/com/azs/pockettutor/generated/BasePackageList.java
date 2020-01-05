@@ -14,7 +14,6 @@ public class BasePackageList {
         new expo.modules.inapppurchases.InAppPurchasesPackage(),
         new expo.modules.keepawake.KeepAwakePackage(),
         new expo.modules.lineargradient.LinearGradientPackage(),
-        new expo.modules.location.LocationPackage(),
         new expo.modules.permissions.PermissionsPackage(),
         new expo.modules.sqlite.SQLitePackage(),
         new expo.modules.webbrowser.WebBrowserPackage()

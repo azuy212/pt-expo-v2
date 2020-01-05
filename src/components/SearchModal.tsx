@@ -12,7 +12,7 @@ import { headerHeight } from '../theme/header';
 import CourseService from '../services/course';
 import { NavigationScreenProps } from 'react-navigation';
 
-const courseService = new CourseService();
+const courseService = CourseService.getInstance();
 
 type AllSearchProps = { search: string } & IProps & NavigationScreenProps;
 
@@ -23,18 +23,20 @@ const SearchResult = (props: AllSearchProps) => {
       <FlatList
         style={styles.listStyle}
         data={result}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_, index) => index.toString()}
         renderItem={({ item, index }) => (
           <TouchableWithoutFeedback
             onPress={() => {
-              const { subject, ch_tittle, section, subsection } = item;
-              props.navigation.navigate('LectureDetail', {
-                sClass: item.class,
-                sSubject: subject,
-                sTitle: ch_tittle,
-                sSection: section,
-                sSubsection: subsection,
-              });
+              const { subject, ch_tittle, section, subsection, class: sClass } = item;
+              if (courseService.canGoNext(sClass, subject)) {
+                props.navigation.navigate('LectureDetail', {
+                  sClass: item.class,
+                  sSubject: subject,
+                  sTitle: ch_tittle,
+                  sSection: section,
+                  sSubsection: subsection,
+                });
+              }
               props.hideModal();
             }}
           >
