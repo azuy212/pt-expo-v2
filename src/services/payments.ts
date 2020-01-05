@@ -5,7 +5,6 @@ const {
   IAPResponseCode,
   getProductsAsync,
   setPurchaseListener,
-  finishTransactionAsync,
   purchaseItemAsync,
 } = InAppPurchases;
 
@@ -20,37 +19,22 @@ const IAP_ITEMS = [
 ];
 
 export default class Payments {
-  async init() {
-    const history = await connectAsync();
-    if (history.responseCode === IAPResponseCode.OK) {
+  async init(purchaseListener: (result: any) => void) {
+    try {
+      const history = await connectAsync();
+      if (history.responseCode === IAPResponseCode.OK) {
+        // Set purchase listener
+        console.log('setPurchaseListener');
+        setPurchaseListener(purchaseListener);
 
-      // Set purchase listener
-      setPurchaseListener(({ responseCode, results, errorCode }) => {
-        // Purchase was successful
-        if (responseCode === IAPResponseCode.OK) {
-          results.forEach((purchase: any) => {
-            if (!purchase.acknowledged) {
-              console.log(`Successfully purchased ${purchase.productId}`);
-              // Process transaction here and unlock content...
-
-              // Then when you're done
-              finishTransactionAsync(purchase, true);
-            }
-          });
-        } else if (responseCode === IAPResponseCode.USER_CANCELED) {
-          console.log('User canceled the transaction');
-        } else if (responseCode === IAPResponseCode.DEFERRED) {
-          console.log(
-            'User does not have permissions to buy but requested parental approval (iOS only)',
-          );
-        } else {
-          console.warn(`Something went wrong with the purchase. Received errorCode ${errorCode}`);
-        }
-      });
-
-      return history.results ? history.results : [];
+        return history.results ? history.results : [];
+      }
+      throw history.errorCode;
+    } catch (err) {
+      if (err.message !== 'Already connected to App Store') {
+        throw err;
+      }
     }
-    throw history.errorCode;
   }
 
   async getProductsAsync() {

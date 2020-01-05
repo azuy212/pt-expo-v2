@@ -1,10 +1,15 @@
-import { Alert } from 'react-native';
+import { Alert, ToastAndroid } from 'react-native';
 import { ISubsection } from '../models/subsection';
 import { generateDropDownOptions, getDistinctValues, getClassSubjectKey } from './common';
 import { IDropDownOptions } from '../models/dropdown';
 import { dynamoDBClient, subsectionTableName } from '../config/aws-config';
 import Payments from './payments';
-import { InAppPurchase, IAPItemDetails } from 'expo-in-app-purchases/build/InAppPurchases.types';
+import {
+  InAppPurchase,
+  IAPItemDetails,
+  IAPResponseCode,
+} from 'expo-in-app-purchases/build/InAppPurchases.types';
+import { finishTransactionAsync } from 'expo-in-app-purchases';
 
 export default class CourseService {
   private subSectionData: ISubsection[] = [];
@@ -12,10 +17,20 @@ export default class CourseService {
   private purchasedCourses?: (InAppPurchase | IAPItemDetails)[];
   private payments = new Payments();
 
+  public static getInstance() {
+    if (!this.instance) {
+      this.instance = new this();
+    }
+    return this.instance;
+  }
+
+  private static instance: CourseService | null;
+
   async init() {
     try {
       if (!this.purchasedCourses) {
-        this.purchasedCourses = await this.payments.init();
+        this.purchasedCourses = await this.payments.init(this.purchaseListener());
+        console.log('this.purchasedCourses', this.purchasedCourses);
       }
       if (!this.availableCourses) {
         this.availableCourses = await this.payments.getProductsAsync();
@@ -32,6 +47,45 @@ export default class CourseService {
     }
   }
 
+  private purchaseListener(): (result: any) => void {
+    return ({ responseCode, results, errorCode, ...rest }) => {
+      console.log('rest', rest);
+      // Purchase was successful
+      if (responseCode === IAPResponseCode.OK) {
+        results.forEach((purchase: InAppPurchase) => {
+          console.log('purchase :', purchase);
+          if (!purchase.acknowledged) {
+            console.log(`Successfully purchased ${purchase.productId}`);
+            // Process transaction here and unlock content...
+            if (this.purchasedCourses) {
+              this.purchasedCourses.some(c => c.productId === purchase.productId)
+                ? null
+                : this.purchasedCourses.push(purchase);
+            } else {
+              this.purchasedCourses = [purchase];
+            }
+
+            if (purchase.purchaseState) {
+              const course = purchase.productId.replace('course.', '');
+              ToastAndroid.show(`Course ${course.toUpperCase()} has been purchased successfully.`, ToastAndroid.LONG);
+            }
+
+            // Then when you're done
+            finishTransactionAsync(purchase, true);
+          }
+        });
+      } else if (responseCode === IAPResponseCode.USER_CANCELED) {
+        console.log('User canceled the transaction');
+      } else if (responseCode === IAPResponseCode.DEFERRED) {
+        console.log(
+          'User does not have permissions to buy but requested parental approval (iOS only)',
+        );
+      } else {
+        console.warn(`Something went wrong with the purchase. Received errorCode ${errorCode}`);
+      }
+    };
+  }
+
   getClasses() {
     const classes: IDropDownOptions = generateDropDownOptions(
       getDistinctValues(this.subSectionData, 'class'),
@@ -42,7 +96,10 @@ export default class CourseService {
 
   getSubjects(sClass: any) {
     const subjects: IDropDownOptions = generateDropDownOptions(
-      getDistinctValues(this.subSectionData.filter(data => data.class === sClass), 'subject'),
+      getDistinctValues(
+        this.subSectionData.filter(data => data.class === sClass),
+        'subject',
+      ),
     );
     subjects.unshift({ label: 'Select Subject', value: '' });
     return subjects;
@@ -71,10 +128,17 @@ export default class CourseService {
     } else {
       sCourse = 'cert.all';
     }
-    const pCourses = this.purchasedCourses!.map(course => course.productId.split('.')[1].toUpperCase());
-    if (pCourses.includes(sCourse)) {
-      return true;
+    console.log('this.purchasedCourses :', this.purchasedCourses);
+    if (this.purchasedCourses) {
+      const pCourses = this.purchasedCourses.map(course =>
+        course.productId.split('.')[1].toUpperCase(),
+      );
+      if (pCourses.includes(sCourse)) {
+        return true;
+      }
     }
-    this.payments.purchaseItemAsync(`course.${sCourse.toLowerCase()}`);
+    this.payments.purchaseItemAsync(`course.${sCourse.toLowerCase()}`).catch((err) => {
+      console.log('ldkfdasldafsjlkf', err);
+    });
   }
 }
