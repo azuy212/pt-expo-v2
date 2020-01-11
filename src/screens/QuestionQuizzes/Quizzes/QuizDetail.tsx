@@ -246,7 +246,7 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
           <Content contentContainerStyle={styles.container}>
             {this.renderWebViewOrNoData()}
             <Image
-              style={[SCREEN_IMAGE_LOGO, { flex: 3, opacity: 0.2 }]}
+              style={[SCREEN_IMAGE_LOGO, { flex: 2, flexShrink: 1, opacity: 0.2 }]}
               source={logo}
             />
             {this.renderQuizAnswerButton()}
@@ -265,7 +265,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   webView: {
-    flex: 5,
+    flex: 6,
+    flexGrow: 2,
   },
   error: {
     flex: 5,
@@ -273,6 +274,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttons: {
-    flex: 5,
+    flex: 4,
+    flexShrink: 2,
   },
 });

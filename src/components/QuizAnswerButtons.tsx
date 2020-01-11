@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, StyleSheet, StyleProp, ViewStyle, Dimensions } from 'react-native';
 import { Button, Text } from 'native-base';
+
+const { width, height } = Dimensions.get('screen');
 
 interface IProps {
   buttonListener: (x: string) => void;
@@ -42,6 +44,7 @@ const styles = StyleSheet.create({
   answerButton: {
     justifyContent: 'center',
     alignSelf: 'center',
-    width: 100,
+    width: width / 5,
+    height: height / 10,
   },
 });

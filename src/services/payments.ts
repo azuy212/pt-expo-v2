@@ -8,15 +8,21 @@ const {
   purchaseItemAsync,
 } = InAppPurchases;
 
-const IAP_ITEMS = [
-  'course.ixch',
-  'course.xph',
-  'course.xiph',
-  'course.xich',
-  'course.xiiph',
-  'course.xiich',
-  'course.cert.all',
-];
+export const IAP_ITEMS: Record<string, string> = {
+  'course.ixch': 'Chemistry Course for 9th Class',
+  'course.xph': 'Physics Course for 10th Class',
+  'course.xiph': 'Physics Course for 11th Class',
+  'course.xich': 'Chemistry Course for 11th Class',
+  'course.xiiph': 'Physics Course for 12th Class',
+  'course.xiich': 'Chemistry Course for 12th Class',
+  'course.cert.all': 'All Certificates',
+  'cert.cert': 'Certificate Course for CERT',
+  'cert.babok': 'Certificate Course for BABOK',
+  'cert.bpmn': 'Certificate Course for BPMN',
+  'cert.itil': 'Certificate Course for ITIL',
+  'cert.req': 'Certificate Course for REQ',
+  'cert.togaf': 'Certificate Course for TOGAF',
+};
 
 export default class Payments {
   async init(purchaseListener: (result: any) => void) {
@@ -44,7 +50,7 @@ export default class Payments {
         */
 
     // Retrieve product details
-    const { responseCode, results, errorCode } = await getProductsAsync(IAP_ITEMS);
+    const { responseCode, results, errorCode } = await getProductsAsync(Object.keys(IAP_ITEMS));
     if (responseCode === IAPResponseCode.OK) {
       return results ? results : [];
     }
