@@ -102,8 +102,8 @@ android {
         applicationId "com.azs.pockettutor"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 011
-        versionName "0.1.1"
+        versionCode 012
+        versionName "0.1.2"
     }
 
     signingConfigs {
