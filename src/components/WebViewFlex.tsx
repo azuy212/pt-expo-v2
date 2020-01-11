@@ -38,6 +38,7 @@ const WebViewFlex = (props: IProps) => (
         <Loading />
       )}
       startInLoadingState={true}
+      scalesPageToFit={false}
     />
   </View>
 );

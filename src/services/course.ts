@@ -3,7 +3,7 @@ import { ISubsection } from '../models/subsection';
 import { generateDropDownOptions, getDistinctValues, getClassSubjectKey } from './common';
 import { IDropDownOptions } from '../models/dropdown';
 import { dynamoDBClient, subsectionTableName } from '../config/aws-config';
-import Payments from './payments';
+import Payments, { IAP_ITEMS } from './payments';
 import {
   InAppPurchase,
   IAPItemDetails,
@@ -48,26 +48,36 @@ export default class CourseService {
   }
 
   private purchaseListener(): (result: any) => void {
-    return ({ responseCode, results, errorCode, ...rest }) => {
-      console.log('rest', rest);
+    return ({ responseCode, results, errorCode }) => {
       // Purchase was successful
       if (responseCode === IAPResponseCode.OK) {
         results.forEach((purchase: InAppPurchase) => {
-          console.log('purchase :', purchase);
           if (!purchase.acknowledged) {
             console.log(`Successfully purchased ${purchase.productId}`);
             // Process transaction here and unlock content...
+            let isNewlyPurchased = false;
             if (this.purchasedCourses) {
-              this.purchasedCourses.some(c => c.productId === purchase.productId)
-                ? null
-                : this.purchasedCourses.push(purchase);
+              if (!this.purchasedCourses.some(c => c.productId === purchase.productId)) {
+                isNewlyPurchased = true;
+                this.purchasedCourses.push(purchase);
+              }
             } else {
+              isNewlyPurchased = true;
               this.purchasedCourses = [purchase];
             }
 
-            if (purchase.purchaseState) {
-              const course = purchase.productId.replace('course.', '');
-              ToastAndroid.show(`Course ${course.toUpperCase()} has been purchased successfully.`, ToastAndroid.LONG);
+            if (isNewlyPurchased) {
+              if (!purchase.productId.includes('cert')) {
+                ToastAndroid.show(
+                  `${IAP_ITEMS[purchase.productId]} has been purchased successfully.`,
+                  ToastAndroid.LONG,
+                );
+              } else {
+                ToastAndroid.show(
+                  `${IAP_ITEMS[purchase.productId]} have been purchased successfully.`,
+                  ToastAndroid.LONG,
+                );
+              }
             }
 
             // Then when you're done
@@ -122,23 +132,27 @@ export default class CourseService {
   }
 
   canGoNext(sClass: string, sSubject: string) {
-    let sCourse = '';
     if (sClass !== 'Certification') {
-      sCourse = getClassSubjectKey(sClass, sSubject.toLowerCase());
-    } else {
-      sCourse = 'cert.all';
-    }
-    console.log('this.purchasedCourses :', this.purchasedCourses);
-    if (this.purchasedCourses) {
-      const pCourses = this.purchasedCourses.map(course =>
-        course.productId.split('.')[1].toUpperCase(),
-      );
-      if (pCourses.includes(sCourse)) {
-        return true;
+      const sCourse = getClassSubjectKey(sClass, sSubject.toLowerCase());
+      if (this.purchasedCourses) {
+        const pCourses = this.purchasedCourses.map(course =>
+          course.productId.split('.')[1].toUpperCase(),
+        );
+        if (pCourses.includes(sCourse)) {
+          return true;
+        }
       }
+      this.payments.purchaseItemAsync(`course.${sCourse.toLowerCase()}`);
+    } else {
+      if (this.purchasedCourses) {
+        const pCourses = this.purchasedCourses.map(course =>
+          course.productId.split('.')[1].toUpperCase(),
+        );
+        if (pCourses.includes(sSubject)) {
+          return true;
+        }
+      }
+      this.payments.purchaseItemAsync(`cert.${sSubject.toLowerCase()}`);
     }
-    this.payments.purchaseItemAsync(`course.${sCourse.toLowerCase()}`).catch((err) => {
-      console.log('ldkfdasldafsjlkf', err);
-    });
   }
 }
