@@ -18,7 +18,7 @@ import Button from '../../components/ButtonComponent';
 import Auth from '@aws-amplify/auth';
 
 import { Container, Item, Input, Icon } from 'native-base';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import HeaderComponent from '../../components/HeaderComponent';
 
 /******************************** Screen Title /********************************/
@@ -35,7 +35,7 @@ interface State {
 
 type StateKeys = keyof State;
 
-export default class SettingsScreen extends React.Component<NavigationScreenProps, State> {
+export default class SettingsScreen extends React.Component<NavigationStackScreenProps, State> {
   state = {
     password1: '',
     password2: '',

@@ -30,7 +30,7 @@ import Dialog from 'react-native-dialog';
 
 // Load the app logo
 import logo from '../../images/logo.png';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { showErrorAlert } from '../../services/error';
 
 const { height } = Dimensions.get('window');
@@ -57,7 +57,7 @@ interface State {
 
 type StateKeys = keyof State;
 
-export default class SignUpScreen extends React.Component<NavigationScreenProps, State> {
+export default class SignUpScreen extends React.Component<NavigationStackScreenProps, State> {
   state = {
     fullName: '',
     username: '',

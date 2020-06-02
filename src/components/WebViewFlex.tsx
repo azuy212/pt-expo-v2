@@ -1,22 +1,19 @@
 import React from 'react';
-import {
-  View,
-  WebView,
-  ViewStyle,
-  StyleProp,
-  NavState,
-  NativeSyntheticEvent,
-  WebViewMessageEventData,
-} from 'react-native';
+import { View, ViewStyle, StyleProp } from 'react-native';
+import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import Loading from './Loading';
+import {
+  WebViewNavigationEvent,
+  WebViewErrorEvent,
+} from 'react-native-webview/lib/WebViewTypes';
 
 interface IProps {
   style?: StyleProp<ViewStyle>;
   url: string;
-  onLoadStart?: (event: NavState) => void;
-  onLoadEnd?: (event: NavState) => void;
-  onError?: (event: NavState) => void;
-  onMessage?: (event: NativeSyntheticEvent<WebViewMessageEventData>) => void;
+  onLoadStart?: (event: WebViewNavigationEvent) => void;
+  onLoadEnd?: (event: WebViewNavigationEvent | WebViewErrorEvent) => void;
+  onError?: (event: WebViewErrorEvent) => void;
+  onMessage?: (event: WebViewMessageEvent) => void;
 }
 
 const captureData = `setTimeout(() => {
@@ -31,12 +28,11 @@ const WebViewFlex = (props: IProps) => (
       source={{ uri: props.url }}
       onLoadStart={props.onLoadStart}
       onLoadEnd={props.onLoadEnd}
+      onError={props.onError}
       javaScriptEnabled={true}
       injectedJavaScript={captureData}
       onMessage={props.onMessage}
-      renderLoading={() => (
-        <Loading />
-      )}
+      renderLoading={() => <Loading />}
       startInLoadingState={true}
       scalesPageToFit={false}
     />

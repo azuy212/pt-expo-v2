@@ -3,7 +3,7 @@ import ForgetPasswordScreen from './ForgetPasswordScreen';
 import SignInScreen from './SignInScreen';
 import SignUpScreen from './SignUpScreen';
 
-import { createStackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
 // Auth stack
 export const AuthStackNavigator = createStackNavigator(
@@ -35,6 +35,8 @@ export const AuthStackNavigator = createStackNavigator(
     },
   },
   {
-    headerLayoutPreset: 'center',
+    defaultNavigationOptions: {
+      headerTitleAlign: 'center',
+    },
   },
 );

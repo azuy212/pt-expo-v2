@@ -16,6 +16,7 @@ export default class CourseService {
   private availableCourses?: (InAppPurchase | IAPItemDetails)[];
   private purchasedCourses?: (InAppPurchase | IAPItemDetails)[];
   private payments = new Payments();
+  private loading = false;
 
   public static getInstance() {
     if (!this.instance) {
@@ -28,18 +29,22 @@ export default class CourseService {
 
   async init() {
     try {
-      if (!this.purchasedCourses) {
-        this.purchasedCourses = await this.payments.init(this.purchaseListener());
-        console.log('this.purchasedCourses', this.purchasedCourses);
-      }
-      if (!this.availableCourses) {
-        this.availableCourses = await this.payments.getProductsAsync();
-      }
-      const { Items } = await dynamoDBClient.scan({ TableName: subsectionTableName }).promise();
-      if (Items) {
-        this.subSectionData = (Items as ISubsection[]).sort(
-          (a, b) => a.id_subsection - b.id_subsection,
-        );
+      if (!this.loading && this.subSectionData.length === 0) {
+        this.loading = true;
+        if (!this.purchasedCourses) {
+          this.purchasedCourses = await this.payments.init(this.purchaseListener());
+          console.log('this.purchasedCourses', this.purchasedCourses);
+        }
+        if (!this.availableCourses) {
+          this.availableCourses = await this.payments.getProductsAsync();
+        }
+        const { Items } = await dynamoDBClient.scan({ TableName: subsectionTableName }).promise();
+        this.loading = false;
+        if (Items) {
+          this.subSectionData = (Items as ISubsection[]).sort(
+            (a, b) => a.id_subsection - b.id_subsection,
+          );
+        }
       }
     } catch (error) {
       console.log('Error', error);

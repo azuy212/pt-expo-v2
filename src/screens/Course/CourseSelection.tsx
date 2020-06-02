@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, YellowBox } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { Button, Container, Content, Text } from 'native-base';
 
 import Dropdown from '../../components/Dropdown';
@@ -30,7 +30,7 @@ interface IState {
 
 type StateKeys = 'sClass' | 'sSubject' | 'sType';
 
-export default class CourseSelection extends Component<NavigationScreenProps, IState> {
+export default class CourseSelection extends Component<NavigationStackScreenProps, IState> {
   state = {
     loading: true,
     classes: [{ label: '', value: '' }],
@@ -42,7 +42,7 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
 
   private courseService: CourseService;
 
-  constructor(props: NavigationScreenProps) {
+  constructor(props: NavigationStackScreenProps) {
     super(props);
 
     this.courseService = CourseService.getInstance();

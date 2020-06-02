@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationSwitchScreenProps } from 'react-navigation';
 
 import Auth from '@aws-amplify/auth';
 import * as Font from 'expo-font';
@@ -10,7 +10,7 @@ interface State {
   userToken: any;
 }
 
-export default class AuthLoadingScreen extends React.Component<NavigationScreenProps, State> {
+export default class AuthLoadingScreen extends React.Component<NavigationSwitchScreenProps, State> {
   state = {
     userToken: null,
   };
@@ -21,8 +21,8 @@ export default class AuthLoadingScreen extends React.Component<NavigationScreenP
 
   // Get the logged in users and remember them
   loadApp = async () => {
-    await Auth.currentAuthenticatedUser()
-      .then((user: any) => {
+    const user = await Auth.currentAuthenticatedUser()
+      .then((user) => {
         this.setState({
           userToken: user.signInUserSession.accessToken.jwtToken,
         });

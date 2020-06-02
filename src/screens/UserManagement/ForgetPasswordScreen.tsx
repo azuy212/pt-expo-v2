@@ -18,7 +18,7 @@ import { Container, Item, Input, Icon } from 'native-base';
 
 import Button from '../../components/ButtonComponent';
 import { showErrorAlert } from '../../services/error';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 
 // Load the app logo
 import logo from '../../images/logo.png';
@@ -35,7 +35,7 @@ interface State {
 
 type StateKeys = keyof State;
 
-export default class ForgetPasswordScreen extends React.Component<NavigationScreenProps, State> {
+export default class ForgetPasswordScreen extends React.Component<NavigationStackScreenProps, State> {
   state = {
     username: '',
     authCode: '',

@@ -10,16 +10,15 @@ import {
 import { Header, Item, Icon, Input, Button } from 'native-base';
 import { headerHeight } from '../theme/header';
 import CourseService from '../services/course';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 
 const courseService = CourseService.getInstance();
 
-type AllSearchProps = { search: string } & IProps & NavigationScreenProps;
+type AllSearchProps = { search: string } & IProps & NavigationStackScreenProps;
 
 const SearchResult = (props: AllSearchProps) => {
   const result = courseService.getSearchResult(props.search);
   return (
-    <View>
       <FlatList
         style={styles.listStyle}
         data={result}
@@ -52,7 +51,6 @@ const SearchResult = (props: AllSearchProps) => {
           </TouchableWithoutFeedback>
         )}
       />
-    </View>
   );
 };
 
@@ -61,7 +59,7 @@ interface IProps {
   hideModal: () => void;
 }
 
-type AllProps = NavigationScreenProps & IProps;
+type AllProps = NavigationStackScreenProps & IProps;
 
 interface IState {
   search: string;
@@ -72,7 +70,7 @@ export default class SearchModal extends Component<AllProps, IState> {
     search: '',
   };
   async componentDidMount() {
-    await courseService.init();
+    // await courseService.init();
   }
 
   render() {

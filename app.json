@@ -1,35 +1,17 @@
 {
+  "name": "PocketTutor",
+  "displayName": "Pocket Tutor",
   "expo": {
     "name": "Pocket Tutor",
     "slug": "pocket-tutor-v2",
-    "privacy": "public",
-    "sdkVersion": "34.0.0",
+    "version": "1.0.0",
     "platforms": [
       "ios",
-      "android"
+      "android",
+      "web"
     ],
-    "version": "2.5.1",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
     "assetBundlePatterns": [
       "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "package": "com.azs.pockettutor"
-    },
-    "entryPoint": "node_modules/expo/AppEntry.js"
-  },
-  "displayName": "Pocket Tutor",
-  "name": "PocketTutor"
+    ]
+  }
 }

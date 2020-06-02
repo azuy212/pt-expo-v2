@@ -3,11 +3,10 @@ import {
   StyleSheet,
   ToastAndroid,
   NativeSyntheticEvent,
-  WebViewMessageEventData,
   Image,
 } from 'react-native';
 import { Container, Content, Root, Toast, View, H1 } from 'native-base';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 
 import QuizService, { FilesBaseUrl } from '../../../services/quiz';
 import { showErrorAlert } from '../../../services/error';
@@ -19,6 +18,7 @@ import QuizAnswerButtons from '../../../components/QuizAnswerButtons';
 import logo from '../../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../../theme/image';
 import QuizHeader from '../../../components/QuizHeader';
+import { WebViewMessageEvent } from 'react-native-webview';
 
 interface IState {
   quizzes: IQuiz[];
@@ -32,7 +32,7 @@ interface IState {
   startTime: number;
 }
 
-type IProps = NavigationScreenProps;
+type IProps = NavigationStackScreenProps;
 
 export default class QuizDetail extends PureComponent<IProps, IState> {
   state = {
@@ -49,7 +49,7 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
 
   private quizService!: QuizService;
 
-  constructor(props: NavigationScreenProps) {
+  constructor(props: NavigationStackScreenProps) {
     super(props);
 
     const { params } = props.navigation.state;
@@ -169,7 +169,7 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
     }
   }
 
-  handleError = (event: NativeSyntheticEvent<WebViewMessageEventData>) => {
+  handleError = (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data;
     const regex = /<Code>AccessDenied<\/Code>/;
     const error = regex.test(message);

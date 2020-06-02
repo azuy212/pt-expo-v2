@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { Button, Container, Content, Text } from 'native-base';
 
 import Dropdown from '../../../components/Dropdown';
@@ -25,7 +25,7 @@ interface IState {
 
 type StateKeys = keyof IState;
 
-export default class QuestionSelection extends Component<NavigationScreenProps, IState> {
+export default class QuestionSelection extends Component<NavigationStackScreenProps, IState> {
   state = {
     loading: true,
     questions: [{ label: 'Select Question', value: '' }],
@@ -34,7 +34,7 @@ export default class QuestionSelection extends Component<NavigationScreenProps, 
 
   private questionService!: QuestionService;
 
-  constructor(props: NavigationScreenProps) {
+  constructor(props: NavigationStackScreenProps) {
     super(props);
     const { params } = props.navigation.state;
 

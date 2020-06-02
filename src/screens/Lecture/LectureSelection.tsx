@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { Button, Container, Content, Text } from 'native-base';
 
 import Dropdown from '../../components/Dropdown';
@@ -29,7 +29,7 @@ interface IState {
 
 type StateKeys = 'sTitle' | 'sSection' | 'sSubsection';
 
-export default class LectureSelection extends Component<NavigationScreenProps, IState> {
+export default class LectureSelection extends Component<NavigationStackScreenProps, IState> {
   state = {
     loading: true,
     titles: [{ label: 'Select Title', value: '' }],
@@ -42,7 +42,7 @@ export default class LectureSelection extends Component<NavigationScreenProps, I
 
   private lectureService!: LectureService;
 
-  constructor(props: NavigationScreenProps) {
+  constructor(props: NavigationStackScreenProps) {
     super(props);
     const { params } = props.navigation.state;
 
