@@ -5,7 +5,7 @@ import { Button } from 'react-native-elements';
 
 import { ICognitoUserAttributeData } from 'amazon-cognito-identity-js';
 import { showErrorAlert } from '../../services/error';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import HeaderComponent from '../../components/HeaderComponent';
 import { Container, Content } from 'native-base';
 import Loading from '../../components/Loading';
@@ -19,7 +19,7 @@ interface State {
   profile: any;
 }
 
-export default class ProfileScreen extends React.Component<NavigationScreenProps, State> {
+export default class ProfileScreen extends React.Component<NavigationStackScreenProps, State> {
   state: Readonly<State> = {
     profile: null,
     attr: [],

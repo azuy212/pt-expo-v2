@@ -3,11 +3,10 @@ import {
   StyleSheet,
   ToastAndroid,
   NativeSyntheticEvent,
-  WebViewMessageEventData,
   Image,
 } from 'react-native';
 import { Container, Content, Root, Toast, View, H1 } from 'native-base';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 
 import QuizService, { FilesBaseUrl } from '../../../services/quiz';
 import { showErrorAlert } from '../../../services/error';
@@ -19,6 +18,7 @@ import QuizAnswerButtons from '../../../components/QuizAnswerButtons';
 import logo from '../../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../../theme/image';
 import QuizHeader from '../../../components/QuizHeader';
+import { WebViewMessageEvent } from 'react-native-webview';
 
 interface IState {
   quizzes: IQuiz[];
@@ -28,11 +28,11 @@ interface IState {
   correctAnswers: number;
   skipped: number;
   error: boolean | null;
-  loading: boolean | null;
+  loading?: boolean;
   startTime: number;
 }
 
-type IProps = NavigationScreenProps;
+type IProps = NavigationStackScreenProps;
 
 export default class QuizDetail extends PureComponent<IProps, IState> {
   state = {
@@ -43,13 +43,12 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
     correctAnswers: 0,
     skipped: 0,
     error: null,
-    loading: null,
     startTime: 0,
   } as IState;
 
   private quizService!: QuizService;
 
-  constructor(props: NavigationScreenProps) {
+  constructor(props: NavigationStackScreenProps) {
     super(props);
 
     const { params } = props.navigation.state;
@@ -158,6 +157,7 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
 
   answersButtonListener = (answer: string) => {
     const { currentQuizNumber, quizzes, correctAnswers } = this.state;
+    this.setState({ loading: true });
     const currentQuiz = quizzes[currentQuizNumber];
     if (answer === currentQuiz.answer) {
       this.setState({ correctAnswers: correctAnswers + 1 }, () =>
@@ -169,15 +169,12 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
     }
   }
 
-  handleError = (event: NativeSyntheticEvent<WebViewMessageEventData>) => {
+  handleError = (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data;
-    const regex = /<Code>AccessDenied<\/Code>/;
-    const error = regex.test(message);
-    if (error !== this.state.error) {
-      this.setState({ error });
-      if (!error) {
-        this.setState({ startTime: Date.now() });
-      }
+    if (message === 'Error') {
+      this.setState({ error: true });
+    } else if (message === 'Success') {
+      this.setState({ loading: false, error: false, startTime: Date.now() });
     }
   }
 
@@ -217,13 +214,15 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
     const { error, filePath } = this.state;
     return error ? (
       <View style={styles.error}>
-        <H1>No Data Found!</H1>
+        <H1>No Quiz Found!</H1>
       </View>
     ) : filePath ? (
       <WebViewFlex
         style={styles.webView}
         url={`${FilesBaseUrl}/${this.state.filePath}`}
         onMessage={this.handleError}
+        onError={() => this.setState({ error: true })}
+        isQuiz={true}
       />
     ) : null;
   }
@@ -233,6 +232,7 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
       <QuizAnswerButtons
         style={styles.buttons}
         buttonListener={this.answersButtonListener}
+        disabled={this.state.loading}
       />
     ) : null;
   }
@@ -245,10 +245,6 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
           {this.renderQuizHeader()}
           <Content contentContainerStyle={styles.container}>
             {this.renderWebViewOrNoData()}
-            <Image
-              style={[SCREEN_IMAGE_LOGO, { flex: 3, opacity: 0.2 }]}
-              source={logo}
-            />
             {this.renderQuizAnswerButton()}
           </Content>
         </Container>
@@ -260,12 +256,14 @@ export default class QuizDetail extends PureComponent<IProps, IState> {
 const styles = StyleSheet.create({
   container: {
     flex: 12,
+    paddingHorizontal: 10,
   },
   quizHeader: {
     flex: 1,
   },
   webView: {
-    flex: 5,
+    flex: 8,
+    flexGrow: 2,
   },
   error: {
     flex: 5,
@@ -273,6 +271,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttons: {
-    flex: 5,
+    flex: 2,
+    flexShrink: 2,
   },
 });

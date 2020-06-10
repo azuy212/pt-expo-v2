@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Dimensions } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { Container, Content, Text } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
 import { Video } from 'expo';
@@ -14,7 +14,7 @@ interface IProps {
   sTitle: string;
 }
 
-type AllProps = IProps & NavigationScreenProps;
+type AllProps = IProps & NavigationStackScreenProps;
 
 const LectureVideo = (props: AllProps) => {
 

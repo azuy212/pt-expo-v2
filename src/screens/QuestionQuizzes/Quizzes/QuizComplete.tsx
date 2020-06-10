@@ -4,7 +4,7 @@ import { Container, Row, Grid, Col, Button, Text, H2, H3 } from 'native-base';
 import moment from 'moment';
 
 import HeaderComponent from '../../../components/HeaderComponent';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { calculatePercentage } from '../../../services/common';
 import QuizResultField from '../../../components/QuizResultField';
 
@@ -19,7 +19,7 @@ interface IState {
   duration: number;
 }
 
-type IProps = NavigationScreenProps;
+type IProps = NavigationStackScreenProps;
 
 export default class QuizComplete extends Component<IProps, IState> {
   state = {

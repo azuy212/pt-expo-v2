@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Container, Content, Form, Item, Input, Label, Textarea, Button, Text } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { StyleSheet, Image } from 'react-native';
 
 import logo from '../../images/logo.png';
 import { SCREEN_IMAGE_LOGO } from '../../theme/image';
 
-export default class ChatScreen extends Component<NavigationScreenProps> {
+export default class ChatScreen extends Component<NavigationStackScreenProps> {
   render() {
     return (
       <Container style={styles.container}>

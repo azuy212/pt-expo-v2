@@ -1,5 +1,6 @@
 import React from 'react';
-import { createDrawerNavigator, createStackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 
 import ChatScreen from '../Common/ChatScreen';
 import ProfileScreen from '../Common/ProfileScreen';

@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 
 // Load the app logo
 import logo from '../../images/logo.png';
 
-export default class WelcomeScreen extends React.Component<NavigationScreenProps> {
+export default class WelcomeScreen extends React.Component<NavigationStackScreenProps> {
   handleRoute = async (destination: string) => {
     await this.props.navigation.navigate(destination);
   }

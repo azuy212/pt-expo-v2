@@ -10,31 +10,32 @@ import {
 import { Header, Item, Icon, Input, Button } from 'native-base';
 import { headerHeight } from '../theme/header';
 import CourseService from '../services/course';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 
-const courseService = new CourseService();
+const courseService = CourseService.getInstance();
 
-type AllSearchProps = { search: string } & IProps & NavigationScreenProps;
+type AllSearchProps = { search: string } & IProps & NavigationStackScreenProps;
 
 const SearchResult = (props: AllSearchProps) => {
   const result = courseService.getSearchResult(props.search);
   return (
-    <View>
       <FlatList
         style={styles.listStyle}
         data={result}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_, index) => index.toString()}
         renderItem={({ item, index }) => (
           <TouchableWithoutFeedback
             onPress={() => {
-              const { subject, ch_tittle, section, subsection } = item;
-              props.navigation.navigate('LectureDetail', {
-                sClass: item.class,
-                sSubject: subject,
-                sTitle: ch_tittle,
-                sSection: section,
-                sSubsection: subsection,
-              });
+              const { subject, ch_tittle, section, subsection, class: sClass } = item;
+              if (courseService.canGoNext(sClass, subject)) {
+                props.navigation.navigate('LectureDetail', {
+                  sClass: item.class,
+                  sSubject: subject,
+                  sTitle: ch_tittle,
+                  sSection: section,
+                  sSubsection: subsection,
+                });
+              }
               props.hideModal();
             }}
           >
@@ -50,7 +51,6 @@ const SearchResult = (props: AllSearchProps) => {
           </TouchableWithoutFeedback>
         )}
       />
-    </View>
   );
 };
 
@@ -59,7 +59,7 @@ interface IProps {
   hideModal: () => void;
 }
 
-type AllProps = NavigationScreenProps & IProps;
+type AllProps = NavigationStackScreenProps & IProps;
 
 interface IState {
   search: string;
@@ -70,7 +70,7 @@ export default class SearchModal extends Component<AllProps, IState> {
     search: '',
   };
   async componentDidMount() {
-    await courseService.init();
+    // await courseService.init();
   }
 
   render() {

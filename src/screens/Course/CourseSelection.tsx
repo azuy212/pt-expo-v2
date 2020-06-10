@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, Image, ActivityIndicator } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { StyleSheet, YellowBox } from 'react-native';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { Button, Container, Content, Text } from 'native-base';
 
 import Dropdown from '../../components/Dropdown';
@@ -8,10 +8,12 @@ import CourseService from '../../services/course';
 import HeaderComponent from '../../components/HeaderComponent';
 import { showErrorAlert } from '../../services/error';
 
-import logo from '../../images/logo.png';
-import { SCREEN_IMAGE_LOGO } from '../../theme/image';
 import { IDropDownOptions } from '../../models/dropdown';
 import Loading from '../../components/Loading';
+
+YellowBox.ignoreWarnings([
+  'VirtualizedList: missing keys for items',
+]);
 
 /******************************** Screen Title /********************************/
 const SCREEN_TITLE = 'Course';
@@ -28,7 +30,7 @@ interface IState {
 
 type StateKeys = 'sClass' | 'sSubject' | 'sType';
 
-export default class CourseSelection extends Component<NavigationScreenProps, IState> {
+export default class CourseSelection extends Component<NavigationStackScreenProps, IState> {
   state = {
     loading: true,
     classes: [{ label: '', value: '' }],
@@ -40,10 +42,10 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
 
   private courseService: CourseService;
 
-  constructor(props: NavigationScreenProps) {
+  constructor(props: NavigationStackScreenProps) {
     super(props);
 
-    this.courseService = new CourseService();
+    this.courseService = CourseService.getInstance();
   }
 
   async componentDidMount() {
@@ -63,26 +65,16 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
   nextButtonPressed = () => {
     const { sClass, sSubject, sType } = this.state;
 
-    if (sClass === '') {
-      return showErrorAlert('Select all fields', 'Please select Class');
-    }
-    if (sSubject === '') {
-      return showErrorAlert('Select all fields', 'Please select Subject');
-    }
-    if (sType === '') {
-      return showErrorAlert(
-        'Select all fields',
-        'Please select Lecture/Questions',
-      );
-    }
-
-    if (sType === 'Lectures') {
-      this.props.navigation.navigate('LectureSelection', { sClass, sSubject });
-    } else {
-      this.props.navigation.navigate('QuestionQuizzesSelection', {
-        sClass,
-        sSubject,
-      });
+    const canGoNext = this.courseService.canGoNext(sClass, sSubject);
+    if (canGoNext) {
+      if (sType === 'Lectures') {
+        this.props.navigation.navigate('LectureSelection', { sClass, sSubject });
+      } else {
+        this.props.navigation.navigate('QuestionQuizzesSelection', {
+          sClass,
+          sSubject,
+        });
+      }
     }
   }
 
@@ -118,7 +110,7 @@ export default class CourseSelection extends Component<NavigationScreenProps, IS
                 this.onSelectionChange('sType', itemValue)
               }
             />
-            <Button onPress={this.nextButtonPressed} style={styles.nextButton}>
+            <Button disabled={!sClass || !sSubject || !sType} onPress={this.nextButtonPressed} style={styles.nextButton}>
               <Text>Next</Text>
             </Button>
           </Content>

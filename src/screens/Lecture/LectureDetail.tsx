@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, NativeSyntheticEvent, WebViewMessageEventData, Image } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { StyleSheet, NativeSyntheticEvent, Image } from 'react-native';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { Container, Content, View, H1 } from 'native-base';
 
 import HeaderComponent from '../../components/HeaderComponent';
 import { FilesBaseUrl } from '../../services/lecture';
 import WebViewFlex from '../../components/WebViewFlex';
-import { Header } from 'react-native-elements';
+import { WebViewMessageEvent } from 'react-native-webview';
 
 interface IState {
   filePath: string;
@@ -15,7 +15,7 @@ interface IState {
   error: boolean;
 }
 
-export default class LectureDetail extends Component<NavigationScreenProps, IState> {
+export default class LectureDetail extends Component<NavigationStackScreenProps, IState> {
   state = {
     filePath: '',
     videoPath: '',
@@ -28,11 +28,9 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
     this.setState(params as IState);
   }
 
-  handleError = (event: NativeSyntheticEvent<WebViewMessageEventData>) => {
+  handleError = (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data;
-    const regex = /<Code>AccessDenied<\/Code>/;
-    const error = regex.test(message);
-    this.setState({ error });
+    this.setState({ error: message === 'Error' });
   }
 
   videoIconPress = () => {
@@ -62,6 +60,7 @@ export default class LectureDetail extends Component<NavigationScreenProps, ISta
               style={styles.webView}
               url={`${FilesBaseUrl}/${filePath}`}
               onMessage={this.handleError}
+              onError={() => this.setState({ error: true })}
             />
           )}
         </Content>

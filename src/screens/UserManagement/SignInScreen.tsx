@@ -17,7 +17,7 @@ import Auth from '@aws-amplify/auth';
 import { Container, Item, Input, Icon } from 'native-base';
 
 import Button from '../../components/ButtonComponent';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { showErrorAlert } from '../../services/error';
 
 // Load the app logo
@@ -33,7 +33,7 @@ interface State {
 
 type StateKeys = keyof State;
 
-export default class SignInScreen extends React.Component<NavigationScreenProps, State> {
+export default class SignInScreen extends React.Component<NavigationStackScreenProps, State> {
   state = {
     username: '',
     password: '',
@@ -66,6 +66,7 @@ export default class SignInScreen extends React.Component<NavigationScreenProps,
           style={styles.container}
           behavior='padding'
           enabled={true}
+          keyboardVerticalOffset={-200}
         >
           <TouchableWithoutFeedback
             style={styles.container}

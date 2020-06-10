@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, NativeSyntheticEvent, WebViewMessageEventData } from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+import { StyleSheet } from 'react-native';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { Container, Content, View, H1 } from 'native-base';
 
 import HeaderComponent from '../../../components/HeaderComponent';
 import { FilesBaseUrl } from '../../../services/question';
 import WebViewFlex from '../../../components/WebViewFlex';
+import { WebViewMessageEvent } from 'react-native-webview';
 
 interface IState {
   filePath: string;
@@ -14,7 +15,7 @@ interface IState {
   error: boolean;
 }
 
-export default class QuestionDetail extends Component<NavigationScreenProps, IState> {
+export default class QuestionDetail extends Component<NavigationStackScreenProps, IState> {
   state = {
     filePath: '',
     videoPath: '',
@@ -27,11 +28,9 @@ export default class QuestionDetail extends Component<NavigationScreenProps, ISt
     this.setState(params as IState);
   }
 
-  handleError = (event: NativeSyntheticEvent<WebViewMessageEventData>) => {
+  handleError = (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data;
-    const regex = /<Code>AccessDenied<\/Code>/;
-    const error = regex.test(message);
-    this.setState({ error });
+    this.setState({ error: message === 'Error' });
   }
 
   render() {
@@ -49,6 +48,7 @@ export default class QuestionDetail extends Component<NavigationScreenProps, ISt
               style={styles.webView}
               url={`${FilesBaseUrl}/${filePath}`}
               onMessage={this.handleError}
+              onError={() => this.setState({ error: true })}
             />
           )}
         </Content>

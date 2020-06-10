@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Header, Left, Button, Icon, Right, Body, Title } from 'native-base';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { StatusBar, StyleSheet, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
 
 import SearchModal from './SearchModal';
@@ -14,7 +14,7 @@ interface IProps {
   enableSearch?: boolean;
 }
 
-type AllProps = IProps & NavigationScreenProps;
+type AllProps = IProps & NavigationStackScreenProps;
 
 interface IState {
   enableSearch: boolean;

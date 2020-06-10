@@ -5,23 +5,21 @@ import {
   Container,
   List,
   ListItem,
-  Content,
   Icon,
-  Label,
 } from 'native-base';
-import { DrawerItemsProps } from 'react-navigation';
+import { NavigationDrawerScreenProps } from 'react-navigation-drawer';
 const routes = [
-{ label: 'Home', icon: 'home' },
-{ label: 'Chat', icon: 'chatboxes' },
-{ label: 'Profile', icon: 'person' },
-{ label: 'Settings', icon: 'settings' },
-{ label: 'Sign Out', icon: 'log-out' },
+  { label: 'Home', icon: 'home' },
+  { label: 'Chat', icon: 'chatboxes' },
+  { label: 'Profile', icon: 'person' },
+  { label: 'Settings', icon: 'settings' },
+  { label: 'Sign Out', icon: 'log-out' },
 ];
 
 import background from '../images/background.png';
 import { Auth } from 'aws-amplify';
 
-export default class SideBar extends React.Component<DrawerItemsProps, any> {
+export default class SideBar extends React.Component<NavigationDrawerScreenProps, any> {
   // Sign out from the app
   signOutAlert = async () => {
     await Alert.alert(
@@ -49,36 +47,35 @@ export default class SideBar extends React.Component<DrawerItemsProps, any> {
   render() {
     return (
       <Container>
-        <Content>
-          <Image
-            source={background}
-            style={{
-              height: 120,
-              width: '100%',
-              alignSelf: 'stretch',
-              position: 'absolute',
-            }}
-          />
-          <List
-            dataArray={routes}
-            contentContainerStyle={{ marginTop: 120 }}
-            renderRow={(data: {label: string, icon: string}) => {
-              return (
-                <ListItem
-                  button={true}
-                  onPress={() => {
-                    data.label === 'Sign Out'
-                      ? this.signOutAlert()
-                      : this.props.navigation.navigate(data.label);
-                  }}
-                >
-                  <Icon name={data.icon} style={{ marginRight: 10 }} />
-                  <Text>{data.label}</Text>
-                </ListItem>
-              );
-            }}
-          />
-        </Content>
+        <Image
+          source={background}
+          style={{
+            height: 120,
+            width: '100%',
+            alignSelf: 'stretch',
+            position: 'absolute',
+          }}
+        />
+        <List
+          dataArray={routes}
+          contentContainerStyle={{ marginTop: 120 }}
+          keyExtractor={data => data.label}
+          renderRow={(data: { label: string; icon: string }) => {
+            return (
+              <ListItem
+                button={true}
+                onPress={() => {
+                  data.label === 'Sign Out'
+                    ? this.signOutAlert()
+                    : this.props.navigation.navigate(data.label);
+                }}
+              >
+                <Icon name={data.icon} style={{ marginRight: 10 }} />
+                <Text>{data.label}</Text>
+              </ListItem>
+            );
+          }}
+        />
       </Container>
     );
   }
