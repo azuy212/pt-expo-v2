@@ -33,7 +33,6 @@ export default class CourseService {
         this.loading = true;
         if (!this.purchasedCourses) {
           this.purchasedCourses = await this.payments.init(this.purchaseListener());
-          console.log('this.purchasedCourses', this.purchasedCourses);
         }
         if (!this.availableCourses) {
           this.availableCourses = await this.payments.getProductsAsync();

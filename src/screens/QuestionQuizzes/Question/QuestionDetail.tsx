@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, NativeSyntheticEvent } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { Container, Content, View, H1 } from 'native-base';
 
@@ -30,9 +30,7 @@ export default class QuestionDetail extends Component<NavigationStackScreenProps
 
   handleError = (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data;
-    const regex = /<Code>AccessDenied<\/Code>/;
-    const error = regex.test(message);
-    this.setState({ error });
+    this.setState({ error: message === 'Error' });
   }
 
   render() {
@@ -50,6 +48,7 @@ export default class QuestionDetail extends Component<NavigationStackScreenProps
               style={styles.webView}
               url={`${FilesBaseUrl}/${filePath}`}
               onMessage={this.handleError}
+              onError={() => this.setState({ error: true })}
             />
           )}
         </Content>

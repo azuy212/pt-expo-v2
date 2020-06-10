@@ -30,7 +30,6 @@ export default class Payments {
       const history = await connectAsync();
       if (history.responseCode === IAPResponseCode.OK) {
         // Set purchase listener
-        console.log('setPurchaseListener');
         setPurchaseListener(purchaseListener);
 
         return history.results ? history.results : [];

@@ -6,7 +6,6 @@ import { Container, Content, View, H1 } from 'native-base';
 import HeaderComponent from '../../components/HeaderComponent';
 import { FilesBaseUrl } from '../../services/lecture';
 import WebViewFlex from '../../components/WebViewFlex';
-import { Header } from 'react-native-elements';
 import { WebViewMessageEvent } from 'react-native-webview';
 
 interface IState {
@@ -31,9 +30,7 @@ export default class LectureDetail extends Component<NavigationStackScreenProps,
 
   handleError = (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data;
-    const regex = /<Code>AccessDenied<\/Code>/;
-    const error = regex.test(message);
-    this.setState({ error });
+    this.setState({ error: message === 'Error' });
   }
 
   videoIconPress = () => {
@@ -63,6 +60,7 @@ export default class LectureDetail extends Component<NavigationStackScreenProps,
               style={styles.webView}
               url={`${FilesBaseUrl}/${filePath}`}
               onMessage={this.handleError}
+              onError={() => this.setState({ error: true })}
             />
           )}
         </Content>
